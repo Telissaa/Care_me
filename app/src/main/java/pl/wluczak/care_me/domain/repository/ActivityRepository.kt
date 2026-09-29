@@ -2,8 +2,28 @@ package pl.wluczak.care_me.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import pl.wluczak.care_me.domain.model.Activity
+import pl.wluczak.care_me.domain.model.Reminder
+import pl.wluczak.care_me.domain.model.Step
 
+/**
+ * Repository interface for managing Activities, Steps, and Reminders.
+ */
 interface ActivityRepository {
+    // Activity CRUD
     fun getAllActivities(): Flow<List<Activity>>
-    suspend fun insertActivity(activity: Activity)
+    fun getActivityById(id: Long): Flow<Activity?>
+    suspend fun insertActivity(activity: Activity): Long
+    suspend fun updateActivity(activity: Activity)
+    suspend fun deleteActivity(activity: Activity)
+
+    // Step CRUD
+    fun getStepsForActivity(activityId: Long): Flow<List<Step>>
+    suspend fun insertStep(step: Step): Long
+    suspend fun updateStep(step: Step)
+    suspend fun deleteStep(step: Step)
+
+    // Reminder CRUD
+    fun getRemindersForActivity(activityId: Long): Flow<List<Reminder>>
+    suspend fun insertReminder(reminder: Reminder): Long
+    suspend fun deleteReminder(reminder: Reminder)
 }

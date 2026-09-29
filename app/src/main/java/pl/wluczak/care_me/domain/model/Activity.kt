@@ -1,5 +1,8 @@
 package pl.wluczak.care_me.domain.model
 
+/**
+ * Domain model representing a care activity.
+ */
 data class Activity(
     val id: Long = 0,
     val name: String,
