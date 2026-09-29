@@ -23,6 +23,6 @@ fun UvResponseDto.toDomain(): UvIndex {
     return UvIndex(
         uvValue = uvVal,
         safeSunTimeMinutes = safeTime,
-        riskLevel = riskLevel
+        riskLevel = riskLevel,
     )
 }

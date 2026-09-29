@@ -1,5 +1,6 @@
 package pl.wluczak.care_me.data.repository
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -16,7 +17,7 @@ import java.io.IOException
  * Implementation of UvRepository retrieving data from UVApi with Resource handling.
  */
 class UvRepositoryImpl(
-    private val api: UVApi
+    private val api: UVApi,
 ) : UvRepository {
 
     override fun getUvIndex(lat: Double, lng: Double): Flow<Resource<UvIndex>> = flow {
@@ -25,6 +26,8 @@ class UvRepositoryImpl(
             val response = api.getUvIndex(lat, lng)
             val uvIndex = response.toDomain()
             emit(Resource.Success(uvIndex))
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "An unexpected HTTP error occurred"))
         } catch (_: IOException) {

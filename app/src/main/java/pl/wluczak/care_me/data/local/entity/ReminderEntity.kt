@@ -15,8 +15,8 @@ import androidx.room.PrimaryKey
             entity = ActivityEntity::class,
             parentColumns = ["id"],
             childColumns = ["activityId"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
     indices = [Index(value = ["activityId"])]
 )

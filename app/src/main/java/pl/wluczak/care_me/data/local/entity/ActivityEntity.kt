@@ -12,5 +12,5 @@ data class ActivityEntity(
     val id: Long = 0,
     val name: String,
     val description: String,
-    val iconResId: Int
+    val iconResId: Int,
 )

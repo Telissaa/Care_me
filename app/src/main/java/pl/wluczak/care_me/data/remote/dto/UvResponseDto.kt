@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UvResponseDto(
     @SerialName("result")
-    val result: UvResultDto? = null
+    val result: UvResultDto? = null,
 )
 
 @Serializable

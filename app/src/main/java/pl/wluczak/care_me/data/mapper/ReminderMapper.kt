@@ -11,7 +11,7 @@ fun ReminderEntity.toDomain(): Reminder {
         id = id,
         activityId = activityId,
         timeInMillis = timeInMillis,
-        isRepeating = isRepeating
+        isRepeating = isRepeating,
     )
 }
 
@@ -20,6 +20,6 @@ fun Reminder.toEntity(): ReminderEntity {
         id = id,
         activityId = activityId,
         timeInMillis = timeInMillis,
-        isRepeating = isRepeating
+        isRepeating = isRepeating,
     )
 }

@@ -21,7 +21,7 @@ import pl.wluczak.care_me.domain.repository.ActivityRepository
 class ActivityRepositoryImpl(
     private val activityDao: ActivityDao,
     private val stepDao: StepDao,
-    private val reminderDao: ReminderDao
+    private val reminderDao: ReminderDao,
 ) : ActivityRepository {
 
     override fun getAllActivities(): Flow<List<Activity>> {

@@ -8,6 +8,6 @@ interface UVApi {
     @GET("uv")
     suspend fun getUvIndex(
         @Query("lat") lat: Double,
-        @Query("lng") lng: Double
+        @Query("lng") lng: Double,
     ): UvResponseDto
 }

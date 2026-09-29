@@ -16,8 +16,8 @@ import pl.wluczak.care_me.domain.model.RichTextContent
             entity = ActivityEntity::class,
             parentColumns = ["id"],
             childColumns = ["activityId"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
     indices = [Index(value = ["activityId"])]
 )
