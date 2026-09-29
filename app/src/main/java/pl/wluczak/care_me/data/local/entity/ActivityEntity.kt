@@ -1,0 +1,13 @@
+package pl.wluczak.care_me.data.local.entity
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "activities")
+data class ActivityEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val name: String,
+    val description: String,
+    val iconResId: Int
+)
