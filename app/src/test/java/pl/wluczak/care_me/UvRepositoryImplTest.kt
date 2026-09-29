@@ -26,7 +26,7 @@ class UvRepositoryImplTest {
                     result = UvResultDto(
                         uv = 4.2,
                         safeExposureTime = SafeExposureTimeDto(st1 = 45),
-                    )
+                    ),
                 )
             }
         }

@@ -17,8 +17,8 @@ class ConvertersTest {
             rawText = "Hello World",
             spans = listOf(
                 RichTextSpan(0, 5, SpanType.BOLD),
-                RichTextSpan(6, 11, SpanType.COLOR, value = "#FF0000")
-            )
+                RichTextSpan(6, 11, SpanType.COLOR, value = "#FF0000"),
+            ),
         )
 
         val jsonString = converters.fromRichTextContent(original)
@@ -28,11 +28,35 @@ class ConvertersTest {
     }
 
     @Test
+    fun richTextContent_deserializationWhenEmptyOrBlank_returnsDefaultRichTextContent() {
+        val emptyResult = converters.toRichTextContent("")
+        val blankResult = converters.toRichTextContent("   ")
+
+        assertEquals(RichTextContent(), emptyResult)
+        assertEquals(RichTextContent(), blankResult)
+    }
+
+    @Test
+    fun richTextContent_deserializationWhenMalformedJson_returnsRawTextFallback() {
+        val malformedString = "Plain unformatted string"
+        val result = converters.toRichTextContent(malformedString)
+
+        assertEquals(RichTextContent(rawText = malformedString), result)
+    }
+
+    @Test
     fun listString_serializationAndDeserialization_isCorrect() {
         val list = listOf("apple", "banana", "cherry")
         val jsonString = converters.fromList(list)
         val deserialized = converters.toList(jsonString)
 
         assertEquals(list, deserialized)
+    }
+
+    @Test
+    fun listString_deserializationWhenEmptyOrMalformed_returnsEmptyList() {
+        assertEquals(emptyList<String>(), converters.toList(""))
+        assertEquals(emptyList<String>(), converters.toList("  "))
+        assertEquals(emptyList<String>(), converters.toList("not a json array"))
     }
 }

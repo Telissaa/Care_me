@@ -14,8 +14,8 @@ class UvMapperTest {
         val dto = UvResponseDto(
             result = UvResultDto(
                 uv = 5.5,
-                safeExposureTime = SafeExposureTimeDto(st1 = 30)
-            )
+                safeExposureTime = SafeExposureTimeDto(st1 = 30),
+            ),
         )
 
         val domain = dto.toDomain()
@@ -34,5 +34,58 @@ class UvMapperTest {
         assertEquals(0.0, domain.uvValue, 0.01)
         assertEquals(null, domain.safeSunTimeMinutes)
         assertEquals("Low", domain.riskLevel)
+    }
+
+    @Test
+    fun uvResponseDto_toDomain_handlesNegativeUv_clampsToZero() {
+        val dto = UvResponseDto(
+            result = UvResultDto(
+                uv = -1.5,
+                safeExposureTime = SafeExposureTimeDto(st1 = 60),
+            ),
+        )
+
+        val domain = dto.toDomain()
+
+        assertEquals(0.0, domain.uvValue, 0.01)
+        assertEquals("Low", domain.riskLevel)
+        assertEquals(60, domain.safeSunTimeMinutes)
+    }
+
+    @Test
+    fun uvResponseDto_toDomain_handlesMissingOrNegativeSafeExposureTime_returnsNull() {
+        val dtoMissing = UvResponseDto(
+            result = UvResultDto(
+                uv = 3.0,
+                safeExposureTime = SafeExposureTimeDto(),
+            ),
+        )
+        val dtoNegative = UvResponseDto(
+            result = UvResultDto(
+                uv = 3.0,
+                safeExposureTime = SafeExposureTimeDto(st1 = -10),
+            ),
+        )
+
+        val domainMissing = dtoMissing.toDomain()
+        val domainNegative = dtoNegative.toDomain()
+
+        assertEquals(null, domainMissing.safeSunTimeMinutes)
+        assertEquals(null, domainNegative.safeSunTimeMinutes)
+    }
+
+    @Test
+    fun uvResponseDto_toDomain_usesSecondarySkinTypesWhenSt1Null() {
+        val dto = UvResponseDto(
+            result = UvResultDto(
+                uv = 7.0,
+                safeExposureTime = SafeExposureTimeDto(st1 = null, st4 = 45),
+            ),
+        )
+
+        val domain = dto.toDomain()
+
+        assertEquals(45, domain.safeSunTimeMinutes)
+        assertEquals("High", domain.riskLevel)
     }
 }

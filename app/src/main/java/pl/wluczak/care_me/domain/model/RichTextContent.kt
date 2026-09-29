@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RichTextContent(
     val rawText: String = "",
-    val spans: List<RichTextSpan> = emptyList()
+    val spans: List<RichTextSpan> = emptyList(),
 )
 
 /**
@@ -19,7 +19,7 @@ data class RichTextSpan(
     val start: Int,
     val end: Int,
     val type: SpanType,
-    val value: String? = null
+    val value: String? = null,
 )
 
 /**
@@ -30,5 +30,5 @@ enum class SpanType {
     BOLD,
     ITALIC,
     COLOR,
-    BULLET_LIST
+    BULLET_LIST,
 }

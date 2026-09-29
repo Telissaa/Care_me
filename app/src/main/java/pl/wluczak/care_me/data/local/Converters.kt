@@ -18,7 +18,15 @@ class Converters {
 
     @TypeConverter
     fun toList(value: String): List<String> {
-        return json.decodeFromString(value)
+        return if (value.isBlank()) {
+            emptyList()
+        } else {
+            try {
+                json.decodeFromString(value)
+            } catch (_: Exception) {
+                emptyList()
+            }
+        }
     }
 
     @TypeConverter
@@ -33,7 +41,7 @@ class Converters {
         } else {
             try {
                 json.decodeFromString(value)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 RichTextContent(rawText = value)
             }
         }
