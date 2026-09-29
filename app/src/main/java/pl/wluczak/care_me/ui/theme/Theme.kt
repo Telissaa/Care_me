@@ -1,6 +1,5 @@
 package pl.wluczak.care_me.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -12,31 +11,56 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = ThistleDarkTheme,
+    onPrimary = ThistleDark,
+    primaryContainer = ThistleDark,
+    onPrimaryContainer = Thistle,
+
+    secondary = FrostedBlueDarkTheme,
+    onSecondary = FrostedBlueDark,
+    secondaryContainer = FrostedBlueDark,
+    onSecondaryContainer = FrostedBlue,
+
+    tertiary = TeaGreenDarkTheme,
+    onTertiary = TeaGreenDark,
+    tertiaryContainer = TeaGreenDark,
+    onTertiaryContainer = TeaGreen,
+
+    background = DarkBackground,
+    onBackground = BrightSnow,
+    surface = DarkSurface,
+    onSurface = BrightSnow,
+    error = ErrorRedDark,
+    onError = OnErrorDark
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Thistle,
+    onPrimary = Black,
+    primaryContainer = ThistleContainer,
+    onPrimaryContainer = ThistleDark,
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    secondary = FrostedBlue,
+    onSecondary = Black,
+    secondaryContainer = FrostedBlueContainer,
+    onSecondaryContainer = FrostedBlueDark,
+
+    tertiary = TeaGreen,
+    onTertiary = Black,
+    tertiaryContainer = TeaGreenContainer,
+    onTertiaryContainer = TeaGreenDark,
+
+    background = BrightSnow,
+    onBackground = Black,
+    surface = LightSurface,
+    onSurface = Black,
+    error = ErrorRed,
+    onError = White
 )
 
 @Composable
 fun Care_meTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
