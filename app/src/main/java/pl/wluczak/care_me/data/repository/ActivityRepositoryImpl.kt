@@ -66,15 +66,33 @@ class ActivityRepositoryImpl(
         }
     }
 
+    override suspend fun insertSteps(steps: List<Step>): List<Long> {
+        return withContext(Dispatchers.IO) {
+            stepDao.insertSteps(steps.map { it.toEntity() })
+        }
+    }
+
     override suspend fun updateStep(step: Step) {
         withContext(Dispatchers.IO) {
             stepDao.updateStep(step.toEntity())
         }
     }
 
+    override suspend fun updateSteps(steps: List<Step>) {
+        withContext(Dispatchers.IO) {
+            stepDao.updateSteps(steps.map { it.toEntity() })
+        }
+    }
+
     override suspend fun deleteStep(step: Step) {
         withContext(Dispatchers.IO) {
             stepDao.deleteStep(step.toEntity())
+        }
+    }
+
+    override suspend fun deleteStepById(id: Long) {
+        withContext(Dispatchers.IO) {
+            stepDao.deleteStepById(id)
         }
     }
 
@@ -93,6 +111,12 @@ class ActivityRepositoryImpl(
     override suspend fun deleteReminder(reminder: Reminder) {
         withContext(Dispatchers.IO) {
             reminderDao.deleteReminder(reminder.toEntity())
+        }
+    }
+
+    override suspend fun deleteReminderById(id: Long) {
+        withContext(Dispatchers.IO) {
+            reminderDao.deleteReminderById(id)
         }
     }
 }

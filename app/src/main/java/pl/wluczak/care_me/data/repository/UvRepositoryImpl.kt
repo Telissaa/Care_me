@@ -29,7 +29,12 @@ class UvRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: HttpException) {
-            emit(Resource.Error(e.localizedMessage ?: "An unexpected HTTP error occurred"))
+            val errorMessage = when (e.code()) {
+                403 -> "Invalid API key or daily request limit exceeded."
+                404 -> "Location data for UV index not found."
+                else -> e.localizedMessage ?: "An unexpected HTTP error occurred"
+            }
+            emit(Resource.Error(errorMessage))
         } catch (_: IOException) {
             emit(Resource.Error("Couldn't reach server. Check your internet connection."))
         } catch (e: Exception) {

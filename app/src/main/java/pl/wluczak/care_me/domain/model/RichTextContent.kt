@@ -29,6 +29,9 @@ data class RichTextSpan(
 enum class SpanType {
     BOLD,
     ITALIC,
+    UNDERLINE,
+    STRIKETHROUGH,
     COLOR,
     BULLET_LIST,
+    NUMBERED_LIST,
 }

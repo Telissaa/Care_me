@@ -19,11 +19,15 @@ interface ActivityRepository {
     // Step CRUD
     fun getStepsForActivity(activityId: Long): Flow<List<Step>>
     suspend fun insertStep(step: Step): Long
+    suspend fun insertSteps(steps: List<Step>): List<Long>
     suspend fun updateStep(step: Step)
+    suspend fun updateSteps(steps: List<Step>)
     suspend fun deleteStep(step: Step)
+    suspend fun deleteStepById(id: Long)
 
     // Reminder CRUD
     fun getRemindersForActivity(activityId: Long): Flow<List<Reminder>>
     suspend fun insertReminder(reminder: Reminder): Long
     suspend fun deleteReminder(reminder: Reminder)
+    suspend fun deleteReminderById(id: Long)
 }

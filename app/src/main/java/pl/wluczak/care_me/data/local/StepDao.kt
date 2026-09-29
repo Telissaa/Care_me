@@ -20,9 +20,18 @@ interface StepDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStep(step: StepEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSteps(steps: List<StepEntity>): List<Long>
+
     @Update
     suspend fun updateStep(step: StepEntity)
 
+    @Update
+    suspend fun updateSteps(steps: List<StepEntity>)
+
     @Delete
     suspend fun deleteStep(step: StepEntity)
+
+    @Query("DELETE FROM steps WHERE id = :id")
+    suspend fun deleteStepById(id: Long)
 }
