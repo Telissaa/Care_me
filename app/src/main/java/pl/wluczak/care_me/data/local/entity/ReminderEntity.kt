@@ -2,9 +2,12 @@ package pl.wluczak.care_me.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
 import androidx.room.Index
+import androidx.room.PrimaryKey
 
+/**
+ * Room entity for Reminder, linked to ActivityEntity with CASCADE deletion.
+ */
 @Entity(
     tableName = "reminders",
     foreignKeys = [

@@ -3,6 +3,9 @@ package pl.wluczak.care_me.data.local.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * Room entity for Activity.
+ */
 @Entity(tableName = "activities")
 data class ActivityEntity(
     @PrimaryKey(autoGenerate = true)

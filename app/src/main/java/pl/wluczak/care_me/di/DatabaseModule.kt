@@ -13,6 +13,8 @@ val databaseModule = module {
             AppDatabase.DATABASE_NAME
         ).build()
     }
-    
+
     single { get<AppDatabase>().activityDao() }
+    single { get<AppDatabase>().stepDao() }
+    single { get<AppDatabase>().reminderDao() }
 }

@@ -2,9 +2,13 @@ package pl.wluczak.care_me.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
 import androidx.room.Index
+import androidx.room.PrimaryKey
+import pl.wluczak.care_me.domain.model.RichTextContent
 
+/**
+ * Room entity for Step, linked to ActivityEntity with CASCADE deletion.
+ */
 @Entity(
     tableName = "steps",
     foreignKeys = [
@@ -22,5 +26,5 @@ data class StepEntity(
     val id: Long = 0,
     val activityId: Long,
     val orderIndex: Int,
-    val richTextContent: String // Serialized JSON of RichTextContent
+    val content: RichTextContent
 )
