@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import pl.wluczak.care_me.core.util.DispatcherProvider
 import pl.wluczak.care_me.core.util.Resource
 import pl.wluczak.care_me.data.mapper.toDomain
 import pl.wluczak.care_me.data.remote.api.UVApi
@@ -18,6 +19,7 @@ import java.io.IOException
  */
 class UvRepositoryImpl(
     private val api: UVApi,
+    private val dispatchers: DispatcherProvider,
 ) : UvRepository {
 
     override fun getUvIndex(lat: Double, lng: Double): Flow<Resource<UvIndex>> = flow {
@@ -40,5 +42,5 @@ class UvRepositoryImpl(
         } catch (e: Exception) {
             emit(Resource.Error(e.localizedMessage ?: "An unknown error occurred"))
         }
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(dispatchers.io)
 }

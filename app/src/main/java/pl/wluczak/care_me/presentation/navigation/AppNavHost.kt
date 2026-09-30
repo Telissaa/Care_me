@@ -11,12 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import pl.wluczak.care_me.R
 
 @Composable
 fun AppNavHost(
@@ -56,7 +58,7 @@ private fun DashboardScreen(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "Dashboard",
+                text = stringResource(id = R.string.dashboard_title),
                 style = MaterialTheme.typography.headlineMedium,
             )
 
@@ -64,7 +66,7 @@ private fun DashboardScreen(
                 onClick = { onOpenActivity(1L) },
                 modifier = Modifier.padding(top = 16.dp)
             ) {
-                Text("Open activity detail")
+                Text(stringResource(id = R.string.open_activity_detail))
             }
         }
     }
@@ -85,11 +87,11 @@ private fun ActivityDetailScreen(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "Activity detail",
+                text = stringResource(id = R.string.activity_detail_title),
                 style = MaterialTheme.typography.headlineMedium,
             )
             Text(
-                text = "ID: $activityId",
+                text = stringResource(id = R.string.activity_id, activityId),
                 modifier = Modifier.padding(top = 8.dp)
             )
         }

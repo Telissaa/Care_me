@@ -2,10 +2,12 @@ package pl.wluczak.care_me
 
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import pl.wluczak.care_me.core.util.DispatcherProvider
 import pl.wluczak.care_me.core.util.Resource
 import pl.wluczak.care_me.data.remote.api.UVApi
 import pl.wluczak.care_me.data.remote.dto.SafeExposureTimeDto
@@ -17,6 +19,13 @@ import retrofit2.Response
 import java.io.IOException
 
 class UvRepositoryImplTest {
+
+    private val testDispatcherProvider = object : DispatcherProvider {
+        override val main = Dispatchers.Unconfined
+        override val io = Dispatchers.Unconfined
+        override val default = Dispatchers.Unconfined
+        override val unconfined = Dispatchers.Unconfined
+    }
 
     @Test
     fun getUvIndex_success_emitsLoadingAndSuccess() = runBlocking {
@@ -30,7 +39,7 @@ class UvRepositoryImplTest {
                 )
             }
         }
-        val repository = UvRepositoryImpl(fakeApi)
+        val repository = UvRepositoryImpl(fakeApi, testDispatcherProvider)
 
         val results = repository.getUvIndex(52.2297, 21.0122).toList()
 
@@ -48,7 +57,7 @@ class UvRepositoryImplTest {
                 return UvResponseDto(result = null)
             }
         }
-        val repository = UvRepositoryImpl(fakeApi)
+        val repository = UvRepositoryImpl(fakeApi, testDispatcherProvider)
 
         val results = repository.getUvIndex(52.2297, 21.0122).toList()
 
@@ -64,7 +73,7 @@ class UvRepositoryImplTest {
                 throw HttpException(Response.error<UvResponseDto>(403, "".toResponseBody(null)))
             }
         }
-        val repository = UvRepositoryImpl(fakeApi)
+        val repository = UvRepositoryImpl(fakeApi, testDispatcherProvider)
 
         val results = repository.getUvIndex(52.2297, 21.0122).toList()
 
@@ -80,7 +89,7 @@ class UvRepositoryImplTest {
                 throw IOException("Network timeout")
             }
         }
-        val repository = UvRepositoryImpl(fakeApi)
+        val repository = UvRepositoryImpl(fakeApi, testDispatcherProvider)
 
         val results = repository.getUvIndex(52.2297, 21.0122).toList()
 

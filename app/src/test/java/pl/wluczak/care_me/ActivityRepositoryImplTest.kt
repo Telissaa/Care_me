@@ -1,5 +1,7 @@
 package pl.wluczak.care_me
 
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -8,6 +10,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import pl.wluczak.care_me.core.util.DispatcherProvider
 import pl.wluczak.care_me.data.local.ActivityDao
 import pl.wluczak.care_me.data.local.ReminderDao
 import pl.wluczak.care_me.data.local.StepDao
@@ -27,12 +30,19 @@ class ActivityRepositoryImplTest {
     private lateinit var fakeReminderDao: FakeReminderDao
     private lateinit var repository: ActivityRepositoryImpl
 
+    private val testDispatcherProvider = object : DispatcherProvider {
+        override val main = Dispatchers.Unconfined
+        override val io = Dispatchers.Unconfined
+        override val default = Dispatchers.Unconfined
+        override val unconfined = Dispatchers.Unconfined
+    }
+
     @Before
     fun setUp() {
         fakeActivityDao = FakeActivityDao()
         fakeStepDao = FakeStepDao()
         fakeReminderDao = FakeReminderDao()
-        repository = ActivityRepositoryImpl(fakeActivityDao, fakeStepDao, fakeReminderDao)
+        repository = ActivityRepositoryImpl(fakeActivityDao, fakeStepDao, fakeReminderDao, testDispatcherProvider)
     }
 
     @Test
