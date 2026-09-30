@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import pl.wluczak.care_me.R
+import pl.wluczak.care_me.presentation.dashboard.DashboardScreen
 
 @Composable
 fun AppNavHost(
@@ -39,35 +39,6 @@ fun AppNavHost(
         composable<Screen.ActivityDetail> { backStackEntry ->
             val route = backStackEntry.toRoute<Screen.ActivityDetail>()
             ActivityDetailScreen(activityId = route.activityId)
-        }
-    }
-}
-
-@Composable
-private fun DashboardScreen(
-    onOpenActivity: (Long) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Scaffold { innerPadding ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                text = stringResource(id = R.string.dashboard_title),
-                style = MaterialTheme.typography.headlineMedium,
-            )
-
-            Button(
-                onClick = { onOpenActivity(1L) },
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text(stringResource(id = R.string.open_activity_detail))
-            }
         }
     }
 }
@@ -97,3 +68,4 @@ private fun ActivityDetailScreen(
         }
     }
 }
+
