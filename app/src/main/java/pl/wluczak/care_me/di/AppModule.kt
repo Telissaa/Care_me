@@ -12,6 +12,7 @@ import pl.wluczak.care_me.domain.repository.SettingsRepository
 import pl.wluczak.care_me.domain.repository.UvRepository
 import pl.wluczak.care_me.core.util.DispatcherProvider
 import pl.wluczak.care_me.core.util.StandardDispatcherProvider
+import pl.wluczak.care_me.presentation.activity_detail.ActivityDetailViewModel
 import pl.wluczak.care_me.presentation.dashboard.HomeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 
@@ -30,4 +31,5 @@ val appModule = module {
     single<SettingsRepository> { SettingsRepositoryImpl(get<Context>().dataStore) }
 
     viewModel { HomeViewModel(get(), get()) }
+    viewModel { (activityId: Long) -> ActivityDetailViewModel(activityId, get(), get()) }
 }

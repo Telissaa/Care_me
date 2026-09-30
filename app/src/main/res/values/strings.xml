@@ -7,4 +7,9 @@
     <string name="empty_activities_title">No activities yet</string>
     <string name="empty_activities_subtitle">Tap the + button to add a new activity</string>
     <string name="add_activity">Add activity</string>
+    <string name="add_step">Add step</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="delete_step">Delete step</string>
+    <string name="no_steps">No steps added yet. Tap "Add step" to begin.</string>
 </resources>
