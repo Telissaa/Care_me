@@ -17,6 +17,7 @@ import pl.wluczak.care_me.domain.model.Activity
 import pl.wluczak.care_me.domain.model.RichTextContent
 import pl.wluczak.care_me.domain.model.Step
 import pl.wluczak.care_me.domain.repository.ActivityRepository
+import java.util.concurrent.ConcurrentHashMap
 
 data class ActivityDetailUiState(
     val activity: Activity? = null,
@@ -25,7 +26,7 @@ data class ActivityDetailUiState(
 )
 
 class ActivityDetailViewModel(
-    private val activityId: Long,
+    activityId: Long,
     private val activityRepository: ActivityRepository,
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
@@ -33,41 +34,51 @@ class ActivityDetailViewModel(
     private val _uiState = MutableStateFlow(ActivityDetailUiState())
     val uiState: StateFlow<ActivityDetailUiState> = _uiState.asStateFlow()
 
-    private var updateStepJob: Job? = null
+    private var currentActivityId: Long = activityId
+    private val updateStepJobs = ConcurrentHashMap<Long, Job>()
 
     init {
         loadActivityDetails()
     }
 
     private fun loadActivityDetails() {
-        activityRepository.getActivityById(activityId)
-            .onEach { activity ->
-                _uiState.update { it.copy(activity = activity, isLoading = false) }
-            }
-            .flowOn(dispatcherProvider.io)
-            .launchIn(viewModelScope)
+        if (currentActivityId > 0) {
+            activityRepository.getActivityById(currentActivityId)
+                .onEach { activity ->
+                    _uiState.update { it.copy(activity = activity, isLoading = false) }
+                }
+                .flowOn(dispatcherProvider.io)
+                .launchIn(viewModelScope)
 
-        activityRepository.getStepsForActivity(activityId)
-            .onEach { steps ->
-                _uiState.update { currentState ->
-                    // Preserve local in-flight step edits if list size matches
-                    if (currentState.steps.size == steps.size && currentState.steps.isNotEmpty()) {
-                        currentState
-                    } else {
+            activityRepository.getStepsForActivity(currentActivityId)
+                .onEach { steps ->
+                    _uiState.update { currentState ->
                         currentState.copy(steps = steps.sortedBy { step -> step.orderIndex })
                     }
                 }
-            }
-            .flowOn(dispatcherProvider.io)
-            .launchIn(viewModelScope)
+                .flowOn(dispatcherProvider.io)
+                .launchIn(viewModelScope)
+        } else {
+            _uiState.update { it.copy(isLoading = false) }
+        }
     }
 
     fun addStep() {
         viewModelScope.launch(dispatcherProvider.io) {
+            if (currentActivityId <= 0 || (_uiState.value.activity == null && !_uiState.value.isLoading)) {
+                val newActivity = Activity(
+                    name = "New Activity",
+                    description = "",
+                    iconResId = 0
+                )
+                currentActivityId = activityRepository.insertActivity(newActivity)
+                loadActivityDetails()
+            }
+
             val currentSteps = _uiState.value.steps
             val newOrderIndex = if (currentSteps.isEmpty()) 0 else currentSteps.maxOf { it.orderIndex } + 1
             val newStep = Step(
-                activityId = activityId,
+                activityId = currentActivityId,
                 orderIndex = newOrderIndex,
                 content = RichTextContent(rawText = "")
             )
@@ -83,8 +94,8 @@ class ActivityDetailViewModel(
             state.copy(steps = updatedSteps)
         }
 
-        updateStepJob?.cancel()
-        updateStepJob = viewModelScope.launch(dispatcherProvider.io) {
+        updateStepJobs[stepId]?.cancel()
+        updateStepJobs[stepId] = viewModelScope.launch(dispatcherProvider.io) {
             delay(300)
             val step = _uiState.value.steps.find { it.id == stepId }
             if (step != null) {
@@ -105,15 +116,14 @@ class ActivityDetailViewModel(
                 step.copy(orderIndex = index)
             }
 
-            // Immediately update local UI state to reflect new order
             _uiState.update { it.copy(steps = reorderedSteps) }
-
             activityRepository.updateSteps(reorderedSteps)
         }
     }
 
     fun deleteStep(stepId: Long) {
         viewModelScope.launch(dispatcherProvider.io) {
+            updateStepJobs.remove(stepId)?.cancel()
             activityRepository.deleteStepById(stepId)
         }
     }

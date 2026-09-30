@@ -157,7 +157,7 @@ private fun applyToggle(
         var result = currentContent.spans.toMutableList()
 
         if (spanType == SpanType.COLOR) {
-            // Remove/trim any existing COLOR spans that overlap with min..max
+            // Remove/trim any existing COLOR spans that overlap with min, max
             result = result.filterNot { it.type == SpanType.COLOR && it.start >= min && it.end <= max }.toMutableList()
         }
 

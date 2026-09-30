@@ -8,7 +8,10 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pl.wluczak.care_me.core.util.DispatcherProvider
+import pl.wluczak.care_me.domain.model.Activity
 import pl.wluczak.care_me.domain.repository.ActivityRepository
 
 class HomeViewModel(
@@ -31,5 +34,19 @@ class HomeViewModel(
             }
             .flowOn(dispatcherProvider.io)
             .launchIn(viewModelScope)
+    }
+
+    fun addActivity(name: String, description: String, onCreated: (Long) -> Unit) {
+        viewModelScope.launch(dispatcherProvider.io) {
+            val newActivity = Activity(
+                name = name,
+                description = description,
+                iconResId = 0
+            )
+            val newId = activityRepository.insertActivity(newActivity)
+            withContext(dispatcherProvider.main) {
+                onCreated(newId)
+            }
+        }
     }
 }
