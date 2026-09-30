@@ -1,6 +1,7 @@
 package pl.wluczak.care_me
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import pl.wluczak.care_me.data.mapper.toDomain
 import pl.wluczak.care_me.data.remote.dto.SafeExposureTimeDto
@@ -26,14 +27,23 @@ class UvMapperTest {
     }
 
     @Test
-    fun uvResponseDto_toDomain_handlesNullsGracefully() {
-        val dto = UvResponseDto(result = null)
+    fun uvResponseDto_toDomain_rejectsMissingUvValue() {
+        assertThrows(IllegalArgumentException::class.java) {
+            UvResponseDto(result = null).toDomain()
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            UvResponseDto(result = UvResultDto(uv = null)).toDomain()
+        }
+    }
 
-        val domain = dto.toDomain()
-
-        assertEquals(0.0, domain.uvValue, 0.01)
-        assertEquals(null, domain.safeSunTimeMinutes)
-        assertEquals("Low", domain.riskLevel)
+    @Test
+    fun uvResponseDto_toDomain_rejectsNonFiniteUvValue() {
+        assertThrows(IllegalArgumentException::class.java) {
+            UvResponseDto(result = UvResultDto(uv = Double.NaN)).toDomain()
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            UvResponseDto(result = UvResultDto(uv = Double.POSITIVE_INFINITY)).toDomain()
+        }
     }
 
     @Test

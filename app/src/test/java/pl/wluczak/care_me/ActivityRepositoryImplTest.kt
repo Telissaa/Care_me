@@ -104,6 +104,20 @@ class ActivityRepositoryImplTest {
         assertEquals(0, remindersAfter.size)
     }
 
+    @Test
+    fun updateReminder_updatesStoredReminder() = runBlocking {
+        val reminder = Reminder(id = 10, activityId = 1, timeInMillis = 1000L, isRepeating = false)
+        repository.insertReminder(reminder)
+
+        val updatedReminder = reminder.copy(timeInMillis = 2000L, isRepeating = true)
+        repository.updateReminder(updatedReminder)
+
+        assertEquals(
+            listOf(updatedReminder),
+            repository.getRemindersForActivity(1).first(),
+        )
+    }
+
     // --- Fakes for Testing ---
 
     private class FakeActivityDao : ActivityDao {
@@ -205,6 +219,20 @@ class ActivityRepositoryImplTest {
             reminders.add(reminder)
             getFlowForActivity(reminder.activityId).value = reminders.filter { it.activityId == reminder.activityId }
             return reminder.id
+        }
+
+        override suspend fun updateReminder(reminder: ReminderEntity) {
+            val index = reminders.indexOfFirst { it.id == reminder.id }
+            if (index != -1) {
+                val previousReminder = reminders[index]
+                reminders[index] = reminder
+                getFlowForActivity(previousReminder.activityId).value =
+                    reminders.filter { it.activityId == previousReminder.activityId }
+                if (reminder.activityId != previousReminder.activityId) {
+                    getFlowForActivity(reminder.activityId).value =
+                        reminders.filter { it.activityId == reminder.activityId }
+                }
+            }
         }
 
         override suspend fun deleteReminder(reminder: ReminderEntity) {

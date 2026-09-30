@@ -42,6 +42,22 @@ class UvRepositoryImplTest {
     }
 
     @Test
+    fun getUvIndex_missingUvValue_emitsLoadingAndError() = runBlocking {
+        val fakeApi = object : UVApi {
+            override suspend fun getUvIndex(lat: Double, lng: Double): UvResponseDto {
+                return UvResponseDto(result = null)
+            }
+        }
+        val repository = UvRepositoryImpl(fakeApi)
+
+        val results = repository.getUvIndex(52.2297, 21.0122).toList()
+
+        assertEquals(2, results.size)
+        assertTrue(results[0] is Resource.Loading)
+        assertTrue(results[1] is Resource.Error)
+    }
+
+    @Test
     fun getUvIndex_httpException_emitsLoadingAndError() = runBlocking {
         val fakeApi = object : UVApi {
             override suspend fun getUvIndex(lat: Double, lng: Double): UvResponseDto {

@@ -7,7 +7,8 @@ import pl.wluczak.care_me.domain.model.UvIndex
  * Mapper for converting UvResponseDto to UvIndex domain model.
  */
 fun UvResponseDto.toDomain(): UvIndex {
-    val rawUv = result?.uv ?: 0.0
+    val rawUv = requireNotNull(result?.uv) { "UV response is missing the UV value." }
+    require(rawUv.isFinite()) { "UV response contains an invalid UV value." }
     val uvVal = rawUv.coerceAtLeast(0.0)
 
     val rawSafeTime = result?.safeExposureTime?.let { safe ->

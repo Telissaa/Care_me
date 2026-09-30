@@ -108,6 +108,12 @@ class ActivityRepositoryImpl(
         }
     }
 
+    override suspend fun updateReminder(reminder: Reminder) {
+        withContext(Dispatchers.IO) {
+            reminderDao.updateReminder(reminder.toEntity())
+        }
+    }
+
     override suspend fun deleteReminder(reminder: Reminder) {
         withContext(Dispatchers.IO) {
             reminderDao.deleteReminder(reminder.toEntity())

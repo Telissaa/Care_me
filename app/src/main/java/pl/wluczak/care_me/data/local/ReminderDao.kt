@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import pl.wluczak.care_me.data.local.entity.ReminderEntity
 
@@ -18,6 +19,9 @@ interface ReminderDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertReminder(reminder: ReminderEntity): Long
+
+    @Update
+    suspend fun updateReminder(reminder: ReminderEntity)
 
     @Delete
     suspend fun deleteReminder(reminder: ReminderEntity)
