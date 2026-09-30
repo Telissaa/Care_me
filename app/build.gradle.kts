@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -20,9 +23,15 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val uvApiKey = providers.gradleProperty("UV_API_KEY")
-            .orElse(System.getenv("UV_API_KEY") ?: "DUMMY_KEY")
-            .get()
+        val properties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            properties.load(FileInputStream(localPropertiesFile))
+        }
+        val uvApiKey = properties.getProperty("UV_API_KEY")
+            ?: providers.gradleProperty("UV_API_KEY").orNull
+            ?: System.getenv("UV_API_KEY")
+            ?: "DUMMY_KEY"
 
         buildConfigField("String", "BASE_URL", "\"https://api.openuv.io/api/v1/\"")
         buildConfigField("String", "UV_API_KEY", "\"${uvApiKey}\"")
