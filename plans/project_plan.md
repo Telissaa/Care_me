@@ -12,17 +12,21 @@ Poniżej znajduje się szczegółowy, podzielony na etapy plan wdrożenia wszyst
 
 1. **Struktura Katalogów:**
    - Zdefiniowanie pakietów zgodnie z Clean Architecture: `data`, `domain`, `presentation`, `di`, `core`.
-2. **Dependency Injection (Koin):**
+2. **Konfiguracja Gradle i Uprawnień (Manifest):**
    - Dodanie niezbędnych zależności w `build.gradle.kts`.
+   - Zdefiniowanie uprawnień w `AndroidManifest.xml`: `INTERNET`, `POST_NOTIFICATIONS` (Android 13+), `SCHEDULE_EXACT_ALARM` (Android 12+) oraz potencjalnie `ACCESS_COARSE_LOCATION` (dla API UV).
+3. **Design System & Theming (Material 3):**
+   - Skonfigurowanie `Color.kt`, `Typography.kt`, `Shape.kt` oraz centralnego `Theme.kt` dla jasnego/ciemnego motywu.
+4. **Dependency Injection (Koin):**
    - Konfiguracja głównych modułów Koin (np. `appModule`, `networkModule`, `databaseModule`).
    - Inicjalizacja `startKoin` w klasie rozszerzającej `Application`.
-3. **Konfiguracja Bazy Danych (Room):**
+5. **Konfiguracja Bazy Danych (Room):**
    - Skonfigurowanie klasy `AppDatabase`.
-   - Zdefiniowanie TypeConverters (potrzebnych m.in. dla formatowania tekstu Rich-Text w obiektach JSON).
-4. **Warstwa Sieciowa (Retrofit2 + Kotlinx Serialization):**
+   - Zdefiniowanie TypeConverters dla własnych struktur danych.
+6. **Warstwa Sieciowa (Retrofit2 + Kotlinx Serialization):**
    - Konfiguracja klienta `OkHttp` (interceptor logowania).
    - Skonfigurowanie instancji `Retrofit` do komunikacji z API (dla UV Index).
-5. **Nawigacja (Jetpack Navigation Compose):**
+7. **Nawigacja (Jetpack Navigation Compose):**
    - Stworzenie grafu nawigacji (Navigation Graph) bazującego na `sealed interface` dla typowanego routingu.
 
 ---
@@ -40,6 +44,27 @@ Poniżej znajduje się szczegółowy, podzielony na etapy plan wdrożenia wszyst
 3. **Repozytoria (Repository):**
    - Implementacja logiki zarządzania przepływem danych (pobieranie z DAO oraz wystawianie do warstwy UI).
    - `UVRepository` pobierające i mapujące dane o indeksie UV z API.
+
+---
+
+## Faza 2.5: Poprawki i Usprawnienia Architektoniczne (Refinements)
+
+**Cel:** Wprowadzenie ważnych poprawek i standardów do zaimplementowanej już warstwy bazowej i danych.
+
+1. **Zarządzanie Ustawieniami (Jetpack DataStore):**
+   - Implementacja Preferences DataStore do bezpiecznego przechowywania ustawień (np. domyślne miasto, wybrany motyw).
+2. **Bezpieczne Zarządzanie Kluczami API (API Keys Security):**
+   - Ukrycie kluczy API za pomocą pliku `local.properties` i wtyczki Gradle (generowanie np. `BuildConfig.UV_API_KEY`).
+3. **Separacja Modeli i Mappery (Clean Architecture):**
+   - Wprowadzenie warstwy czystych modeli domenowych (Domain Models).
+   - Dodanie mapperów konwertujących encje bazy danych (`Entity`) na modele używane w domenie i UI (`Entity.toDomain()`).
+4. **Wstrzykiwanie Dispatcherów (Coroutines):**
+   - Dodanie w Koin modułu wstrzykującego Dispatchers (np. `Dispatchers.IO`), by umożliwić swobodne testowanie (mockowanie dispatcherów).
+5. **Nowoczesny Ekran Startowy (Splash Screen API):**
+   - Konfiguracja `androidx.core:core-splashscreen` zapewniająca spójne i nowoczesne uruchamianie aplikacji od Androida 12+.
+6. **Standaryzacja:**
+   - Wykorzystanie `strings.xml` do przechowywania wszystkich tekstów w aplikacji (i18n).
+   - Weryfikacja/migracja do `libs.versions.toml` w celu scentralizowanego zarządzania zależnościami Gradle.
 
 ---
 
@@ -69,7 +94,7 @@ Poniżej znajduje się szczegółowy, podzielony na etapy plan wdrożenia wszyst
      - **Pogrubienia tekstu** (Bold).
      - Kolorowania fragmentów tekstu.
      - List punktowanych i numerowanych.
-   - Opracowanie bezstratnej metody zapisu formatowania tekstu do bazy (serializacja stanów typu Span do JSON).
+   - Opracowanie bezpiecznej metody zapisu formatowania tekstu do bazy (np. parsowanie tekstu do **Markdown** w locie przed zapisem jako String do bazy Room i rekonstrukcja przy odczycie).
 
 ---
 
@@ -85,6 +110,10 @@ Poniżej znajduje się szczegółowy, podzielony na etapy plan wdrożenia wszyst
    - Interfejs konfiguracji częstotliwości, reguł odnawiania i tytułów notyfikacji.
 3. **Expandable Notifications:**
    - Budowa `NotificationCompat.Builder` z obsługą `BigTextStyle` do wyświetlania w powiadomieniu długich, zformatowanych opisów (Rich-Text) z poziomu systemu powiadomień Androida.
+4. **Rescheduling (Boot Receiver):**
+   - Implementacja `BroadcastReceiver` nasłuchującego na `ACTION_BOOT_COMPLETED`, aby po ponownym uruchomieniu telefonu wczytywać przypomnienia z bazy Room i rejestrować je ponownie w systemowym AlarmManager.
+5. **Zarządzanie Uprawnieniami (Runtime Permissions):**
+   - Dodanie logiki w Jetpack Compose do pytania użytkownika o uprawnienie `POST_NOTIFICATIONS` (Android 13+) przy pierwszej próbie zaplanowania przypomnienia.
 
 ---
 
@@ -94,9 +123,13 @@ Poniżej znajduje się szczegółowy, podzielony na etapy plan wdrożenia wszyst
 
 1. **Implementacja Połączeń:**
    - Skomunikowanie przygotowanego interfejsu API z działającą usługą online.
-2. **Komponent UI (Real-Time Tracker):**
+2. **Źródło Danych Geograficznych (Decyzja/Zdrożenie):**
+   - Podjęcie decyzji w kwestii źródła lokalizacji dla API: wykorzystanie koordynat GPS z urządzenia lub manualne określenie domyślnego miasta w ustawieniach.
+3. **Komponent UI (Real-Time Tracker):**
    - Wydzielony ekran (bądź widget na Dashboard/szczegółach zadania) przedstawiający wizualizację poziomu UV.
    - Odpowiednie stany ładowania (Shimmer/Loader) i obsługa błędów sieci (np. brak internetu, błędy serwera) za pomocą Snackbar/M3.
+4. **Zarządzanie Uprawnieniami Lokalizacji (Runtime Permissions):**
+   - Wykorzystanie Compose API (`rememberLauncherForActivityResult`) do obsługi pytań o uprawnienia `ACCESS_COARSE_LOCATION`, o ile wybrano pobieranie danych o UV na podstawie GPS.
 
 ---
 
@@ -113,3 +146,5 @@ Poniżej znajduje się szczegółowy, podzielony na etapy plan wdrożenia wszyst
    - Refaktoryzacja klas zgodnie z zasadami SOLID.
    - Weryfikacja komentarzy (konsekwentnie w języku angielskim).
    - Ostateczna inspekcja repozytorium.
+4. **Automatyzacja CI/CD (Opcjonalnie):**
+   - Wdrożenie podstawowego przepływu GitHub Actions uruchamiającego detekcję błędów (linter) oraz podstawowe testy jednostkowe przy każdym Pull Requeście.

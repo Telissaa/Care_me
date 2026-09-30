@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "81ed0fa0722951d56a0bb9c8179c6430",
+    "identityHash": "5fa683f57b5061c8b13275808c163cec",
     "entities": [
       {
         "tableName": "activities",
@@ -38,13 +38,11 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "steps",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `activityId` INTEGER NOT NULL, `orderIndex` INTEGER NOT NULL, `richTextContent` TEXT NOT NULL, FOREIGN KEY(`activityId`) REFERENCES `activities`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `activityId` INTEGER NOT NULL, `orderIndex` INTEGER NOT NULL, `content` TEXT NOT NULL, FOREIGN KEY(`activityId`) REFERENCES `activities`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -65,8 +63,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "richTextContent",
-            "columnName": "richTextContent",
+            "fieldPath": "content",
+            "columnName": "content",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -163,10 +161,9 @@
         ]
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '81ed0fa0722951d56a0bb9c8179c6430')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5fa683f57b5061c8b13275808c163cec')"
     ]
   }
 }

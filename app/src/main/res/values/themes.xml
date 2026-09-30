@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.Care_me.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#FFFFFF</item>
+        <item name="windowSplashScreenAnimatedIcon">@android:drawable/ic_dialog_info</item>
+        <item name="postSplashScreenTheme">@style/Theme.Care_me</item>
+    </style>
 
     <style name="Theme.Care_me" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

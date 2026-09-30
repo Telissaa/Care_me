@@ -8,7 +8,7 @@ fun ActivityEntity.toDomain(): Activity {
         id = id,
         name = name,
         description = description,
-        iconResId = iconResId
+        iconResId = iconResId,
     )
 }
 
@@ -17,6 +17,6 @@ fun Activity.toEntity(): ActivityEntity {
         id = id,
         name = name,
         description = description,
-        iconResId = iconResId
+        iconResId = iconResId,
     )
 }

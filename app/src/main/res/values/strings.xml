@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">Care_me</string>
+    <string name="app_name">Care me</string>
+    <string name="dashboard_title">Dashboard</string>
+    <string name="open_activity_detail">Open activity detail</string>
+    <string name="activity_detail_title">Activity detail</string>
+    <string name="activity_id">ID: %d</string>
+    <string name="empty_activities_title">No activities yet</string>
+    <string name="empty_activities_subtitle">Tap the + button to add a new activity</string>
+    <string name="add_activity">Add activity</string>
 </resources>
