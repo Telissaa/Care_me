@@ -25,9 +25,12 @@ val TeaGreenDark = Color(0xFF26541D)
 val TeaGreenDarkTheme = Color(0xFFA5D29C)
 
 // Additional Circle Colors
-val WarmPeachContainer = Color(0xFFFFE8D6)
+val WarmPeachContainer = Color(0xFFFFD3B5)
 val SoftPinkContainer = Color(0xFFFDDBE7)
 val SoftLavenderContainer = Color(0xFFE8D6FF)
+val LightMintContainer = Color(0xFFD6FFF3)
+val SoftYellowContainer = Color(0xFFFFFEC4)
+val SoftRedContainer = Color(0xFFFFD4D4)
 
 // ==========================================
 // Darkmode colors

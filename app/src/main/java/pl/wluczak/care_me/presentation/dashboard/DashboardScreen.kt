@@ -57,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -68,18 +69,27 @@ import org.koin.androidx.compose.koinViewModel
 import pl.wluczak.care_me.R
 import pl.wluczak.care_me.domain.model.Activity
 import pl.wluczak.care_me.ui.theme.FrostedBlueContainer
+import pl.wluczak.care_me.ui.theme.LightMintContainer
+import pl.wluczak.care_me.ui.theme.SoftLavenderContainer
+import pl.wluczak.care_me.ui.theme.SoftPinkContainer
+import pl.wluczak.care_me.ui.theme.SoftRedContainer
+import pl.wluczak.care_me.ui.theme.SoftYellowContainer
 import pl.wluczak.care_me.ui.theme.TeaGreenContainer
 import pl.wluczak.care_me.ui.theme.ThistleContainer
 import pl.wluczak.care_me.ui.theme.ThistleDark
+import pl.wluczak.care_me.ui.theme.WarmPeachContainer
 import pl.wluczak.care_me.ui.theme.WarmWhite
 
 private val AVAILABLE_COLORS = listOf(
-    "#D4F5FF", // FrostedBlueContainer
-    "#E8FDE3", // TeaGreenContainer
-    "#FFE5FC", // ThistleContainer
-    "#FFE8D6", // WarmPeachContainer
-    "#FDDBE7", // SoftPinkContainer
-    "#E8D6FF"  // SoftLavenderContainer
+    FrostedBlueContainer,
+    TeaGreenContainer,
+    ThistleContainer,
+    WarmPeachContainer,
+    SoftPinkContainer,
+    SoftLavenderContainer,
+    LightMintContainer,
+    SoftYellowContainer,
+    SoftRedContainer
 )
 
 private val AVAILABLE_ICONS = listOf(
@@ -119,6 +129,10 @@ fun parseHexColor(colorHex: String): Color {
     } catch (_: Exception) {
         FrostedBlueContainer
     }
+}
+
+fun Color.toHex(): String {
+    return String.format("#%06X", 0xFFFFFF and this.toArgb())
 }
 
 @Composable
@@ -378,7 +392,7 @@ fun AddActivityDialog(
 ) {
     var name by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
-    var selectedColorHex by rememberSaveable { mutableStateOf(AVAILABLE_COLORS.first()) }
+    var selectedColor by remember { mutableStateOf(AVAILABLE_COLORS.first()) }
     var selectedIconName by rememberSaveable { mutableStateOf(AVAILABLE_ICONS.first().first) }
     var isNameError by rememberSaveable { mutableStateOf(false) }
 
@@ -422,23 +436,23 @@ fun AddActivityDialog(
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                 )
 
-                Row(
+                LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    AVAILABLE_COLORS.forEach { colorHex ->
-                        val isSelected = colorHex == selectedColorHex
+                    items(AVAILABLE_COLORS, key = { it.toHex() }) { color ->
+                        val isSelected = color == selectedColor
                         Box(
                             modifier = Modifier
                                 .size(36.dp)
                                 .clip(CircleShape)
-                                .background(parseHexColor(colorHex))
+                                .background(color)
                                 .border(
                                     width = if (isSelected) 3.dp else 1.dp,
                                     color = if (isSelected) Color.Black else Color.Transparent,
                                     shape = CircleShape
                                 )
-                                .clickable { selectedColorHex = colorHex },
+                                .clickable { selectedColor = color },
                             contentAlignment = Alignment.Center
                         ) {
                             if (isSelected) {
@@ -499,7 +513,7 @@ fun AddActivityDialog(
                         onConfirm(
                             name.trim(),
                             description.trim(),
-                            selectedColorHex,
+                            selectedColor.toHex(),
                             selectedIconName
                         )
                     }
