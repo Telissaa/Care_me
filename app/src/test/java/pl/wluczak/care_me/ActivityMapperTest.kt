@@ -16,7 +16,6 @@ class ActivityMapperTest {
         val entity = ActivityEntity(
             id = 1,
             name = "Morning Routine",
-            description = "Start the day fresh",
             iconResId = 123,
         )
 

@@ -50,7 +50,7 @@ fun NotificationSlider(
             Card(
                 modifier = Modifier
                     .width(320.dp)
-                    .height(130.dp),
+                    .height(80.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(containerColor = cardColor),
                 border = BorderStroke(2.dp, Color(0xFF3BA2FF)),
@@ -60,7 +60,7 @@ fun NotificationSlider(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -86,16 +86,6 @@ fun NotificationSlider(
                             color = Color.Black.copy(alpha = 0.8f)
                         )
                     }
-
-                    Text(
-                        text = item.description,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontSize = 14.sp
-                        ),
-                        color = Color.Black.copy(alpha = 0.7f),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
                 }
             }
         }

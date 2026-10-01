@@ -68,7 +68,6 @@ class ActivityDetailViewModel(
             if (currentActivityId <= 0 || (_uiState.value.activity == null && !_uiState.value.isLoading)) {
                 val newActivity = Activity(
                     name = "New Activity",
-                    description = "",
                     iconResId = 0
                 )
                 currentActivityId = activityRepository.insertActivity(newActivity)

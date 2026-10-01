@@ -33,12 +33,10 @@ class HomeViewModel(
             val notificationItems = reminders.map { reminder ->
                 val activity = activities.find { it.id == reminder.activityId }
                 val title = activity?.name ?: "Notification"
-                val desc = activity?.description?.ifBlank { "short description" } ?: "short description"
                 val timeFormatted = formatTime(reminder.timeInMillis)
                 NotificationItem(
                     id = reminder.id,
                     activityName = title,
-                    description = desc,
                     timeRange = timeFormatted
                 )
             }
@@ -64,7 +62,6 @@ class HomeViewModel(
 
     fun addActivity(
         name: String,
-        description: String = "",
         colorHex: String = "#D4F5FF",
         iconName: String = "face",
         onCreated: (Long) -> Unit
@@ -72,7 +69,6 @@ class HomeViewModel(
         viewModelScope.launch(dispatcherProvider.io) {
             val newActivity = Activity(
                 name = name,
-                description = description,
                 colorHex = colorHex,
                 iconName = iconName,
                 iconResId = 0

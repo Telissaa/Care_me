@@ -5,7 +5,7 @@ A modern Android application designed to help users manage tasks, routines, and 
 ## ✨ Features
 
 *   **Home Dashboard**: A clean starting screen featuring a grid/list of icons. Each icon serves as a shortcut to a specific activity or task view.
-*   **Rich-Text Activity Views**: Inside each activity, users can write down a detailed list of steps and descriptions. The built-in editor supports rich-text formatting, including:
+*   **Rich-Text Activity Views**: Inside each activity, users can write down a detailed list of steps. The built-in editor supports rich-text formatting, including:
     *   **Bold text**
     *   Bullet points and numbered lists
     *   Custom text colors

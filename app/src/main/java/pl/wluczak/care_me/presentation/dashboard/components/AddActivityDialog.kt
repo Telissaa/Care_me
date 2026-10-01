@@ -38,11 +38,10 @@ import pl.wluczak.care_me.ui.theme.TeaGreenContainer
 @Composable
 fun AddActivityDialog(
     onDismiss: () -> Unit,
-    onConfirm: (name: String, description: String, colorHex: String, iconName: String) -> Unit,
+    onConfirm: (name: String, colorHex: String, iconName: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var name by rememberSaveable { mutableStateOf("") }
-    var description by rememberSaveable { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf(AVAILABLE_COLORS.first()) }
     var selectedIconName by rememberSaveable { mutableStateOf(AVAILABLE_ICONS.first().first) }
     var isNameError by rememberSaveable { mutableStateOf(false) }
@@ -72,13 +71,6 @@ fun AddActivityDialog(
                     supportingText = if (isNameError) {
                         { Text(stringResource(id = R.string.error_name_required)) }
                     } else null,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text(stringResource(id = R.string.activity_description)) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -163,7 +155,6 @@ fun AddActivityDialog(
                     } else {
                         onConfirm(
                             name.trim(),
-                            description.trim(),
                             selectedColor.toHex(),
                             selectedIconName
                         )

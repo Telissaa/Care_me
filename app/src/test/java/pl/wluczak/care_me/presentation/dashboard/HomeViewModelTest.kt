@@ -52,7 +52,7 @@ class HomeViewModelTest {
 
     @Test
     fun `initial state loads activities from repository`() = runBlocking {
-        fakeRepository.insertActivity(Activity(id = 1L, name = "Skincare Routine", description = "Morning skincare", iconResId = 0))
+        fakeRepository.insertActivity(Activity(id = 1L, name = "Skincare Routine", iconResId = 0))
 
         val state = viewModel.state.first()
         assertFalse(state.isLoading)
@@ -64,7 +64,7 @@ class HomeViewModelTest {
     fun `addActivity inserts activity into repository and calls callback with generated id`() = runBlocking {
         var createdId: Long? = null
 
-        viewModel.addActivity("Night Routine", "Evening care") { newId ->
+        viewModel.addActivity("Night Routine") { newId ->
             createdId = newId
         }
 
@@ -73,7 +73,6 @@ class HomeViewModelTest {
         val state = viewModel.state.first()
         assertEquals(1, state.activities.size)
         assertEquals("Night Routine", state.activities[0].name)
-        assertEquals("Evening care", state.activities[0].description)
     }
 
     private class FakeActivityRepository : ActivityRepository {

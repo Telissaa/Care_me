@@ -161,11 +161,10 @@ fun DashboardScreen(
         if (showAddDialog) {
             AddActivityDialog(
                 onDismiss = { showAddDialog = false },
-                onConfirm = { name, description, colorHex, iconName ->
+                onConfirm = { name, colorHex, iconName ->
                     showAddDialog = false
                     viewModel.addActivity(
                         name = name,
-                        description = description,
                         colorHex = colorHex,
                         iconName = iconName
                     ) { newId ->

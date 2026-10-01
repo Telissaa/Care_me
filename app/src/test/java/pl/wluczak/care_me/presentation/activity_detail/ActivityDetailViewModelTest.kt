@@ -43,7 +43,7 @@ class ActivityDetailViewModelTest {
         
         // Setup initial activity
         runBlocking {
-            fakeRepository.insertActivity(Activity(id = 1L, name = "Skincare Routine", description = "Morning skincare", iconResId = 1))
+            fakeRepository.insertActivity(Activity(id = 1L, name = "Skincare Routine", iconResId = 1))
         }
 
         viewModel = ActivityDetailViewModel(

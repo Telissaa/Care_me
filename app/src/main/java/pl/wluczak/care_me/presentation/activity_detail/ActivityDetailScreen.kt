@@ -95,17 +95,6 @@ fun ActivityDetailScreen(
                     .padding(innerPadding)
                     .padding(horizontal = 16.dp)
             ) {
-                uiState.activity?.description?.let { description ->
-                    if (description.isNotBlank()) {
-                        Text(
-                            text = description,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        )
-                    }
-                }
-
                 if (uiState.steps.isEmpty()) {
                     Box(
                         modifier = Modifier

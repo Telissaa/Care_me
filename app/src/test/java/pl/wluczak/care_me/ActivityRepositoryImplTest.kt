@@ -47,7 +47,7 @@ class ActivityRepositoryImplTest {
 
     @Test
     fun getAllActivities_returnsDomainActivities() = runBlocking {
-        val entity = ActivityEntity(id = 1, name = "Skincare", description = "Daily skin routine", iconResId = 1)
+        val entity = ActivityEntity(id = 1, name = "Skincare", iconResId = 1)
         fakeActivityDao.insertActivity(entity)
 
         val activities = repository.getAllActivities().first()
@@ -58,7 +58,7 @@ class ActivityRepositoryImplTest {
 
     @Test
     fun getActivityById_returnsCorrectActivity() = runBlocking {
-        val entity = ActivityEntity(id = 5, name = "Hydration", description = "Drink water", iconResId = 2)
+        val entity = ActivityEntity(id = 5, name = "Hydration", iconResId = 2)
         fakeActivityDao.insertActivity(entity)
 
         val result = repository.getActivityById(5).first()
@@ -70,7 +70,7 @@ class ActivityRepositoryImplTest {
 
     @Test
     fun updateAndDeleteActivity_worksCorrectly() = runBlocking {
-        val initialActivity = Activity(id = 1, name = "Initial", description = "Desc", iconResId = 1)
+        val initialActivity = Activity(id = 1, name = "Initial", iconResId = 1)
         repository.insertActivity(initialActivity)
 
         val updatedActivity = initialActivity.copy(name = "Updated Name")

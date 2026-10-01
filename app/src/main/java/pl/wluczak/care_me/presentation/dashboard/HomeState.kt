@@ -5,7 +5,6 @@ import pl.wluczak.care_me.domain.model.Activity
 data class NotificationItem(
     val id: Long,
     val activityName: String,
-    val description: String,
     val timeRange: String
 )
 
