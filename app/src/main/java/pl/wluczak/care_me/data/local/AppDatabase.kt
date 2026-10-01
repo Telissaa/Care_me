@@ -12,7 +12,7 @@ import pl.wluczak.care_me.data.local.entity.StepEntity
  */
 @Database(
     entities = [ActivityEntity::class, StepEntity::class, ReminderEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)

@@ -114,7 +114,10 @@ class HomeViewModelTest {
         override suspend fun updateSteps(steps: List<Step>) = throw NotImplementedError()
         override suspend fun deleteStep(step: Step) = throw NotImplementedError()
         override suspend fun deleteStepById(id: Long) = throw NotImplementedError()
+        private val remindersFlow = MutableStateFlow<List<Reminder>>(emptyList())
+
         override fun getRemindersForActivity(activityId: Long): Flow<List<Reminder>> = throw NotImplementedError()
+        override fun getAllReminders(): Flow<List<Reminder>> = remindersFlow
         override suspend fun insertReminder(reminder: Reminder): Long = throw NotImplementedError()
         override suspend fun updateReminder(reminder: Reminder) = throw NotImplementedError()
         override suspend fun deleteReminder(reminder: Reminder) = throw NotImplementedError()

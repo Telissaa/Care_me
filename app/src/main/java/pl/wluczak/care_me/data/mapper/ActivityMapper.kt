@@ -9,6 +9,8 @@ fun ActivityEntity.toDomain(): Activity {
         name = name,
         description = description,
         iconResId = iconResId,
+        iconName = iconName,
+        colorHex = colorHex,
     )
 }
 
@@ -18,5 +20,7 @@ fun Activity.toEntity(): ActivityEntity {
         name = name,
         description = description,
         iconResId = iconResId,
+        iconName = iconName,
+        colorHex = colorHex,
     )
 }

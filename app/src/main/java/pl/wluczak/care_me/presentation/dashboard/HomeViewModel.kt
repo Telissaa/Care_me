@@ -2,12 +2,15 @@ package pl.wluczak.care_me.presentation.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import pl.wluczak.care_me.core.util.DispatcherProvider
@@ -23,24 +26,55 @@ class HomeViewModel(
     val state = _state.asStateFlow()
 
     init {
-        activityRepository.getAllActivities()
-            .onEach { activities ->
-                _state.update { 
-                    it.copy(
-                        activities = activities, 
-                        isLoading = false
-                    ) 
-                }
+        combine(
+            activityRepository.getAllActivities(),
+            activityRepository.getAllReminders()
+        ) { activities, reminders ->
+            val notificationItems = reminders.map { reminder ->
+                val activity = activities.find { it.id == reminder.activityId }
+                val title = activity?.name ?: "Notification"
+                val desc = activity?.description?.ifBlank { "short description" } ?: "short description"
+                val timeFormatted = formatTime(reminder.timeInMillis)
+                NotificationItem(
+                    id = reminder.id,
+                    activityName = title,
+                    description = desc,
+                    timeRange = timeFormatted
+                )
+            }
+            HomeState(
+                activities = activities,
+                notifications = notificationItems,
+                isLoading = false
+            )
+        }
+            .onEach { newState ->
+                _state.value = newState
             }
             .flowOn(dispatcherProvider.io)
             .launchIn(viewModelScope)
     }
 
-    fun addActivity(name: String, description: String, onCreated: (Long) -> Unit) {
+    private fun formatTime(timeInMillis: Long): String {
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val start = sdf.format(Date(timeInMillis))
+        val end = sdf.format(Date(timeInMillis + 3600000L))
+        return "$start - $end"
+    }
+
+    fun addActivity(
+        name: String,
+        description: String = "",
+        colorHex: String = "#D4F5FF",
+        iconName: String = "face",
+        onCreated: (Long) -> Unit
+    ) {
         viewModelScope.launch(dispatcherProvider.io) {
             val newActivity = Activity(
                 name = name,
                 description = description,
+                colorHex = colorHex,
+                iconName = iconName,
                 iconResId = 0
             )
             val newId = activityRepository.insertActivity(newActivity)

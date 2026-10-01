@@ -27,6 +27,7 @@ interface ActivityRepository {
 
     // Reminder CRUD
     fun getRemindersForActivity(activityId: Long): Flow<List<Reminder>>
+    fun getAllReminders(): Flow<List<Reminder>>
     suspend fun insertReminder(reminder: Reminder): Long
     suspend fun updateReminder(reminder: Reminder)
     suspend fun deleteReminder(reminder: Reminder)

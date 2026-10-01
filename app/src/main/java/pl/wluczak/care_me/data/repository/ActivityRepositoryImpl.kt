@@ -104,6 +104,12 @@ class ActivityRepositoryImpl(
             .flowOn(dispatchers.io)
     }
 
+    override fun getAllReminders(): Flow<List<Reminder>> {
+        return reminderDao.getAllReminders()
+            .map { list -> list.map { it.toDomain() } }
+            .flowOn(dispatchers.io)
+    }
+
     override suspend fun insertReminder(reminder: Reminder): Long {
         return withContext(dispatchers.io) {
             reminderDao.insertReminder(reminder.toEntity())

@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 val Black = Color(0xFF000000)
 val White = Color(0xFFFFFFFF)
-val BrightSnow = Color(0xFFF8F9FA)
+val WarmWhite = Color(0xFFFFFBF5)
 
 // Primary: Thistle (Pastel Pink/Purple)
 val Thistle = Color(0xFFF7CDF2)
@@ -23,6 +23,11 @@ val TeaGreen = Color(0xFFD0FCC7)
 val TeaGreenContainer = Color(0xFFE8FDE3)
 val TeaGreenDark = Color(0xFF26541D)
 val TeaGreenDarkTheme = Color(0xFFA5D29C)
+
+// Additional Circle Colors
+val WarmPeachContainer = Color(0xFFFFE8D6)
+val SoftPinkContainer = Color(0xFFFDDBE7)
+val SoftLavenderContainer = Color(0xFFE8D6FF)
 
 // ==========================================
 // Darkmode colors

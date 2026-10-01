@@ -202,6 +202,7 @@ class ActivityDetailViewModelTest {
         }
 
         override fun getRemindersForActivity(activityId: Long) = throw NotImplementedError()
+        override fun getAllReminders(): Flow<List<Reminder>> = throw NotImplementedError()
         override suspend fun insertReminder(reminder: Reminder) = throw NotImplementedError()
         override suspend fun updateReminder(reminder: Reminder) = throw NotImplementedError()
         override suspend fun deleteReminder(reminder: Reminder) = throw NotImplementedError()

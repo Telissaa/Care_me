@@ -17,4 +17,11 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="error_name_required">Name cannot be empty</string>
+    <string name="current_notification">Current notification</string>
+    <string name="no_notifications">None</string>
+    <string name="empty_activities_msg">No activities. Tap + to add.</string>
+    <string name="select_circle_color">Choose circle color:</string>
+    <string name="select_icon">Choose icon:</string>
+    <string name="default_notification_title">Notification</string>
+    <string name="default_short_description">short description</string>
 </resources>

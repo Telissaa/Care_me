@@ -214,6 +214,7 @@ class ActivityRepositoryImplTest {
     private class FakeReminderDao : ReminderDao {
         private val reminders = mutableListOf<ReminderEntity>()
         private val flowMap = mutableMapOf<Long, MutableStateFlow<List<ReminderEntity>>>()
+        private val allRemindersFlow = MutableStateFlow<List<ReminderEntity>>(emptyList())
 
         private fun getFlowForActivity(activityId: Long): MutableStateFlow<List<ReminderEntity>> {
             return flowMap.getOrPut(activityId) {
@@ -221,13 +222,20 @@ class ActivityRepositoryImplTest {
             }
         }
 
+        private fun notifyChanges(activityId: Long) {
+            getFlowForActivity(activityId).value = reminders.filter { it.activityId == activityId }
+            allRemindersFlow.value = reminders.toList()
+        }
+
         override fun getRemindersForActivity(activityId: Long): Flow<List<ReminderEntity>> {
             return getFlowForActivity(activityId)
         }
 
+        override fun getAllReminders(): Flow<List<ReminderEntity>> = allRemindersFlow
+
         override suspend fun insertReminder(reminder: ReminderEntity): Long {
             reminders.add(reminder)
-            getFlowForActivity(reminder.activityId).value = reminders.filter { it.activityId == reminder.activityId }
+            notifyChanges(reminder.activityId)
             return reminder.id
         }
 
@@ -236,11 +244,9 @@ class ActivityRepositoryImplTest {
             if (index != -1) {
                 val previousReminder = reminders[index]
                 reminders[index] = reminder
-                getFlowForActivity(previousReminder.activityId).value =
-                    reminders.filter { it.activityId == previousReminder.activityId }
+                notifyChanges(previousReminder.activityId)
                 if (reminder.activityId != previousReminder.activityId) {
-                    getFlowForActivity(reminder.activityId).value =
-                        reminders.filter { it.activityId == reminder.activityId }
+                    notifyChanges(reminder.activityId)
                 }
             }
         }
@@ -253,7 +259,7 @@ class ActivityRepositoryImplTest {
             val reminder = reminders.find { it.id == id }
             if (reminder != null) {
                 reminders.remove(reminder)
-                getFlowForActivity(reminder.activityId).value = reminders.filter { it.activityId == reminder.activityId }
+                notifyChanges(reminder.activityId)
             }
         }
     }
