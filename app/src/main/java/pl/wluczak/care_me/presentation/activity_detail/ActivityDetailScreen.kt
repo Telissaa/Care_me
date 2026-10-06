@@ -38,8 +38,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import pl.wluczak.care_me.R
-import pl.wluczak.care_me.domain.model.RichTextContent
-import pl.wluczak.care_me.domain.model.Step
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,10 +136,10 @@ fun ActivityDetailScreen(
 
 @Composable
 private fun StepItem(
-    step: Step,
+    step: StepUI,
     index: Int,
     totalSteps: Int,
-    onContentChange: (RichTextContent) -> Unit,
+    onContentChange: (String) -> Unit,
     onMoveUp: () -> Unit,
     onMoveDown: () -> Unit,
     onDelete: () -> Unit,
@@ -199,7 +197,7 @@ private fun StepItem(
             Spacer(modifier = Modifier.height(8.dp))
 
             RichTextEditor(
-                value = step.content,
+                value = step.contentHtml,
                 onValueChange = onContentChange,
                 modifier = Modifier.fillMaxWidth()
             )

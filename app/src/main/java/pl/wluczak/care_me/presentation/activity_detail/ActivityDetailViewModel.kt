@@ -1,8 +1,12 @@
 package pl.wluczak.care_me.presentation.activity_detail
 
+import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mohamedrejeb.richeditor.model.RichTextState
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,16 +16,24 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pl.wluczak.care_me.core.util.DispatcherProvider
 import pl.wluczak.care_me.domain.model.Activity
-import pl.wluczak.care_me.domain.model.RichTextContent
 import pl.wluczak.care_me.domain.model.Step
 import pl.wluczak.care_me.domain.repository.ActivityRepository
 import java.util.concurrent.ConcurrentHashMap
 
+data class StepUI(
+    val id: Long,
+    val activityId: Long,
+    val orderIndex: Int,
+    val contentHtml: String,
+    val cachedAnnotatedString: AnnotatedString? = null
+)
+
 data class ActivityDetailUiState(
     val activity: Activity? = null,
-    val steps: List<Step> = emptyList(),
+    val steps: List<StepUI> = emptyList(),
     val isLoading: Boolean = true
 )
 
@@ -41,6 +53,14 @@ class ActivityDetailViewModel(
         loadActivityDetails()
     }
 
+    private suspend fun parseHtml(html: String): AnnotatedString {
+        return withContext(dispatcherProvider.default) {
+            val state = RichTextState()
+            state.setHtml(html)
+            state.annotatedString
+        }
+    }
+
     private fun loadActivityDetails() {
         if (currentActivityId > 0) {
             activityRepository.getActivityById(currentActivityId)
@@ -52,8 +72,24 @@ class ActivityDetailViewModel(
 
             activityRepository.getStepsForActivity(currentActivityId)
                 .onEach { steps ->
+                    val sortedSteps = steps.sortedBy { step -> step.orderIndex }
+                    
+                    val stepUIs = withContext(dispatcherProvider.default) {
+                        sortedSteps.map { step ->
+                            async {
+                                StepUI(
+                                    id = step.id,
+                                    activityId = step.activityId,
+                                    orderIndex = step.orderIndex,
+                                    contentHtml = step.contentHtml,
+                                    cachedAnnotatedString = parseHtml(step.contentHtml)
+                                )
+                            }
+                        }.awaitAll()
+                    }
+
                     _uiState.update { currentState ->
-                        currentState.copy(steps = steps.sortedBy { step -> step.orderIndex })
+                        currentState.copy(steps = stepUIs)
                     }
                 }
                 .flowOn(dispatcherProvider.io)
@@ -79,25 +115,43 @@ class ActivityDetailViewModel(
             val newStep = Step(
                 activityId = currentActivityId,
                 orderIndex = newOrderIndex,
-                content = RichTextContent(rawText = "")
+                contentHtml = ""
             )
             activityRepository.insertStep(newStep)
         }
     }
 
-    fun updateStepContent(stepId: Long, content: RichTextContent) {
+    fun updateStepContent(stepId: Long, contentHtml: String) {
         _uiState.update { state ->
             val updatedSteps = state.steps.map { step ->
-                if (step.id == stepId) step.copy(content = content) else step
+                if (step.id == stepId) step.copy(contentHtml = contentHtml) else step
             }
             state.copy(steps = updatedSteps)
+        }
+
+        viewModelScope.launch(dispatcherProvider.default) {
+            val annotatedString = parseHtml(contentHtml)
+            _uiState.update { state ->
+                val updatedSteps = state.steps.map { step ->
+                    if (step.id == stepId && step.contentHtml == contentHtml) {
+                        step.copy(cachedAnnotatedString = annotatedString)
+                    } else step
+                }
+                state.copy(steps = updatedSteps)
+            }
         }
 
         updateStepJobs[stepId]?.cancel()
         updateStepJobs[stepId] = viewModelScope.launch(dispatcherProvider.io) {
             delay(300)
-            val step = _uiState.value.steps.find { it.id == stepId }
-            if (step != null) {
+            val stepUi = _uiState.value.steps.find { it.id == stepId }
+            if (stepUi != null) {
+                val step = Step(
+                    id = stepUi.id,
+                    activityId = stepUi.activityId,
+                    orderIndex = stepUi.orderIndex,
+                    contentHtml = contentHtml
+                )
                 activityRepository.updateStep(step)
             }
         }
@@ -116,7 +170,16 @@ class ActivityDetailViewModel(
             }
 
             _uiState.update { it.copy(steps = reorderedSteps) }
-            activityRepository.updateSteps(reorderedSteps)
+            
+            val domainSteps = reorderedSteps.map {
+                Step(
+                    id = it.id,
+                    activityId = it.activityId,
+                    orderIndex = it.orderIndex,
+                    contentHtml = it.contentHtml
+                )
+            }
+            activityRepository.updateSteps(domainSteps)
         }
     }
 

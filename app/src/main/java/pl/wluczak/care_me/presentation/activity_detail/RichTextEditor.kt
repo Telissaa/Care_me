@@ -8,38 +8,43 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import pl.wluczak.care_me.domain.model.RichTextContent
-import pl.wluczak.care_me.domain.model.RichTextSpan
-import pl.wluczak.care_me.domain.model.SpanType
+import com.mohamedrejeb.richeditor.model.RichTextState
+import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RichTextEditor(
-    value: RichTextContent,
-    onValueChange: (RichTextContent) -> Unit,
+    value: String,
+    onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var textFieldValue by remember {
-        mutableStateOf(TextFieldValue(RichTextMapper.toAnnotatedString(value)))
-    }
+    val state = rememberRichTextState()
 
     LaunchedEffect(value) {
-        val mappedString = RichTextMapper.toAnnotatedString(value)
-        if (textFieldValue.annotatedString.text != mappedString.text ||
-            textFieldValue.annotatedString.spanStyles != mappedString.spanStyles
-        ) {
-            textFieldValue = textFieldValue.copy(annotatedString = mappedString)
+        if (state.toHtml() != value) {
+            state.setHtml(value)
         }
+    }
+
+    LaunchedEffect(state) {
+        snapshotFlow { state.annotatedString }
+            .collectLatest {
+                onValueChange(state.toHtml())
+            }
     }
 
     Column(modifier = modifier) {
@@ -50,64 +55,33 @@ fun RichTextEditor(
                 .padding(bottom = 8.dp)
         ) {
             ToolbarButton("Bold") {
-                applyToggle(textFieldValue, value, SpanType.BOLD) { newValue, newContent ->
-                    textFieldValue = newValue
-                    onValueChange(newContent)
-                }
+                state.toggleSpanStyle(SpanStyle(fontWeight = FontWeight.Bold))
             }
             ToolbarButton("Italic") {
-                applyToggle(textFieldValue, value, SpanType.ITALIC) { newValue, newContent ->
-                    textFieldValue = newValue
-                    onValueChange(newContent)
-                }
+                state.toggleSpanStyle(SpanStyle(fontStyle = FontStyle.Italic))
             }
             ToolbarButton("Underline") {
-                applyToggle(textFieldValue, value, SpanType.UNDERLINE) { newValue, newContent ->
-                    textFieldValue = newValue
-                    onValueChange(newContent)
-                }
+                state.toggleSpanStyle(SpanStyle(textDecoration = TextDecoration.Underline))
             }
             ToolbarButton("Strike") {
-                applyToggle(textFieldValue, value, SpanType.STRIKETHROUGH) { newValue, newContent ->
-                    textFieldValue = newValue
-                    onValueChange(newContent)
-                }
+                state.toggleSpanStyle(SpanStyle(textDecoration = TextDecoration.LineThrough))
             }
             ToolbarButton("Red") {
-                applyToggle(textFieldValue, value, SpanType.COLOR, "#FFFF0000") { newValue, newContent ->
-                    textFieldValue = newValue
-                    onValueChange(newContent)
-                }
+                state.toggleSpanStyle(SpanStyle(color = Color.Red))
             }
             ToolbarButton("Blue") {
-                applyToggle(textFieldValue, value, SpanType.COLOR, "#FF0000FF") { newValue, newContent ->
-                    textFieldValue = newValue
-                    onValueChange(newContent)
-                }
+                state.toggleSpanStyle(SpanStyle(color = Color.Blue))
             }
             ToolbarButton("Bullet") {
-                applyToggle(textFieldValue, value, SpanType.BULLET_LIST) { newValue, newContent ->
-                    textFieldValue = newValue
-                    onValueChange(newContent)
-                }
+                state.toggleUnorderedList()
             }
             ToolbarButton("Numbered") {
-                applyToggle(textFieldValue, value, SpanType.NUMBERED_LIST) { newValue, newContent ->
-                    textFieldValue = newValue
-                    onValueChange(newContent)
-                }
+                state.toggleOrderedList()
             }
         }
 
-        OutlinedTextField(
-            value = textFieldValue,
-            onValueChange = { newValue ->
-                textFieldValue = newValue
-                val updatedContent = RichTextMapper.updateTextAndShiftSpans(value, newValue.text)
-                val newAnnotatedString = RichTextMapper.toAnnotatedString(updatedContent)
-                textFieldValue = newValue.copy(annotatedString = newAnnotatedString)
-                onValueChange(updatedContent)
-            },
+        OutlinedRichTextEditor(
+            state = state,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -122,51 +96,4 @@ private fun ToolbarButton(text: String, onClick: () -> Unit) {
     ) {
         Text(text)
     }
-}
-
-private fun applyToggle(
-    textFieldValue: TextFieldValue,
-    currentContent: RichTextContent,
-    spanType: SpanType,
-    spanValue: String? = null,
-    onResult: (TextFieldValue, RichTextContent) -> Unit
-) {
-    val selection = textFieldValue.selection
-    val min = selection.min.coerceIn(0, currentContent.rawText.length)
-    val max = selection.max.coerceIn(0, currentContent.rawText.length)
-
-    if (min == max) return
-
-    val existing = currentContent.spans.find {
-        it.type == spanType && it.start <= min && it.end >= max
-    }
-
-    val newSpans = if (existing != null && (spanType != SpanType.COLOR || existing.value == spanValue)) {
-        // Remove or split span
-        val result = currentContent.spans.toMutableList()
-        result.remove(existing)
-        if (existing.start < min) {
-            result.add(RichTextSpan(existing.start, min, spanType, existing.value))
-        }
-        if (existing.end > max) {
-            result.add(RichTextSpan(max, existing.end, spanType, existing.value))
-        }
-        result
-    } else {
-        // Adding new span
-        var result = currentContent.spans.toMutableList()
-
-        if (spanType == SpanType.COLOR) {
-            // Remove/trim any existing COLOR spans that overlap with min, max
-            result = result.filterNot { it.type == SpanType.COLOR && it.start >= min && it.end <= max }.toMutableList()
-        }
-
-        result.add(RichTextSpan(min, max, spanType, spanValue))
-        result
-    }
-
-    val newContent = currentContent.copy(spans = newSpans)
-    val newAnnotatedString = RichTextMapper.toAnnotatedString(newContent)
-
-    onResult(textFieldValue.copy(annotatedString = newAnnotatedString), newContent)
 }
