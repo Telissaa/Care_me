@@ -3,6 +3,8 @@ package pl.wluczak.care_me.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import pl.wluczak.care_me.data.local.entity.ActivityEntity
 import pl.wluczak.care_me.data.local.entity.ReminderEntity
 import pl.wluczak.care_me.data.local.entity.StepEntity
@@ -12,7 +14,7 @@ import pl.wluczak.care_me.data.local.entity.StepEntity
  */
 @Database(
     entities = [ActivityEntity::class, StepEntity::class, ReminderEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -23,5 +25,11 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         const val DATABASE_NAME = "care_me_db"
+
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE steps ADD COLUMN contentHtml TEXT DEFAULT NULL")
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ val databaseModule = module {
             AppDatabase::class.java,
             AppDatabase.DATABASE_NAME,
         )
+            .addMigrations(AppDatabase.MIGRATION_3_4)
             .fallbackToDestructiveMigration(dropAllTables = true)
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onOpen(db: SupportSQLiteDatabase) {

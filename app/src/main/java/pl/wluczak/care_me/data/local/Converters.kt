@@ -3,7 +3,7 @@ package pl.wluczak.care_me.data.local
 import androidx.room.TypeConverter
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import pl.wluczak.care_me.domain.model.RichTextContent
+import pl.wluczak.care_me.domain.model.LegacyRichTextContent
 
 /**
  * Room type converters using kotlinx.serialization.
@@ -30,19 +30,19 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromRichTextContent(content: RichTextContent): String {
+    fun fromRichTextContent(content: LegacyRichTextContent): String {
         return json.encodeToString(content)
     }
 
     @TypeConverter
-    fun toRichTextContent(value: String): RichTextContent {
+    fun toRichTextContent(value: String): LegacyRichTextContent {
         return if (value.isBlank()) {
-            RichTextContent()
+            LegacyRichTextContent()
         } else {
             try {
                 json.decodeFromString(value)
             } catch (_: Exception) {
-                RichTextContent(rawText = value)
+                LegacyRichTextContent(rawText = value)
             }
         }
     }

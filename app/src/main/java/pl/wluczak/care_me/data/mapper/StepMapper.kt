@@ -12,6 +12,7 @@ fun StepEntity.toDomain(): Step {
         activityId = activityId,
         orderIndex = orderIndex,
         content = content,
+        contentHtml = contentHtml ?: ""
     )
 }
 
@@ -21,5 +22,6 @@ fun Step.toEntity(): StepEntity {
         activityId = activityId,
         orderIndex = orderIndex,
         content = content,
+        contentHtml = contentHtml
     )
 }

@@ -7,5 +7,6 @@ data class Step(
     val id: Long = 0,
     val activityId: Long,
     val orderIndex: Int,
-    val content: RichTextContent
+    val content: LegacyRichTextContent = LegacyRichTextContent(),
+    val contentHtml: String = ""
 )

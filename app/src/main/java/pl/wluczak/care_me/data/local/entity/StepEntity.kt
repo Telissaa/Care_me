@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import pl.wluczak.care_me.domain.model.RichTextContent
+import pl.wluczak.care_me.domain.model.LegacyRichTextContent
 
 /**
  * Room entity for Step, linked to ActivityEntity with CASCADE deletion.
@@ -26,5 +26,6 @@ data class StepEntity(
     val id: Long = 0,
     val activityId: Long,
     val orderIndex: Int,
-    val content: RichTextContent
+    val content: LegacyRichTextContent,
+    val contentHtml: String? = null
 )
