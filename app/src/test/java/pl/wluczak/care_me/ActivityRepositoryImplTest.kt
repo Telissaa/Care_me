@@ -20,7 +20,6 @@ import pl.wluczak.care_me.data.local.entity.StepEntity
 import pl.wluczak.care_me.data.repository.ActivityRepositoryImpl
 import pl.wluczak.care_me.domain.model.Activity
 import pl.wluczak.care_me.domain.model.Reminder
-import pl.wluczak.care_me.domain.model.RichTextContent
 import pl.wluczak.care_me.domain.model.Step
 
 class ActivityRepositoryImplTest {
@@ -87,8 +86,8 @@ class ActivityRepositoryImplTest {
     @Test
     fun stepOperations_insertBatchAndGet_worksCorrectly() = runBlocking {
         val steps = listOf(
-            Step(id = 1, activityId = 1, orderIndex = 0, content = RichTextContent("Step 1")),
-            Step(id = 2, activityId = 1, orderIndex = 1, content = RichTextContent("Step 2")),
+            Step(id = 1, activityId = 1, orderIndex = 0, contentHtml = "Step 1"),
+            Step(id = 2, activityId = 1, orderIndex = 1, contentHtml = "Step 2"),
         )
 
         repository.insertSteps(steps)
@@ -96,8 +95,8 @@ class ActivityRepositoryImplTest {
         val fetchedSteps = repository.getStepsForActivity(1).first()
 
         assertEquals(2, fetchedSteps.size)
-        assertEquals("Step 1", fetchedSteps[0].content.rawText)
-        assertEquals("Step 2", fetchedSteps[1].content.rawText)
+        assertEquals("Step 1", fetchedSteps[0].contentHtml)
+        assertEquals("Step 2", fetchedSteps[1].contentHtml)
     }
 
     @Test

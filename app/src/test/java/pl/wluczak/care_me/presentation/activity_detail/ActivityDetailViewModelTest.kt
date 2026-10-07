@@ -17,7 +17,6 @@ import org.junit.Test
 import pl.wluczak.care_me.core.util.DispatcherProvider
 import pl.wluczak.care_me.domain.model.Activity
 import pl.wluczak.care_me.domain.model.Reminder
-import pl.wluczak.care_me.domain.model.RichTextContent
 import pl.wluczak.care_me.domain.model.Step
 import pl.wluczak.care_me.domain.repository.ActivityRepository
 
@@ -87,11 +86,11 @@ class ActivityDetailViewModelTest {
         val initialSteps = viewModel.uiState.first().steps
         val stepId = initialSteps[0].id
 
-        val newContent = RichTextContent(rawText = "Apply cleanser")
+        val newContent = "Apply cleanser"
         viewModel.updateStepContent(stepId, newContent)
 
         val updatedState = viewModel.uiState.first()
-        assertEquals("Apply cleanser", updatedState.steps[0].content.rawText)
+        assertEquals("Apply cleanser", updatedState.steps[0].contentHtml)
     }
 
     @Test
@@ -103,15 +102,15 @@ class ActivityDetailViewModelTest {
         val step0Id = stepsAfterAdd[0].id
         val step1Id = stepsAfterAdd[1].id
 
-        viewModel.updateStepContent(step0Id, RichTextContent(rawText = "First"))
-        viewModel.updateStepContent(step1Id, RichTextContent(rawText = "Second"))
+        viewModel.updateStepContent(step0Id, "First")
+        viewModel.updateStepContent(step1Id, "Second")
 
         // Move step 0 to index 1
         viewModel.moveStep(0, 1)
 
         val reorderedState = viewModel.uiState.first()
-        assertEquals("Second", reorderedState.steps[0].content.rawText)
-        assertEquals("First", reorderedState.steps[1].content.rawText)
+        assertEquals("Second", reorderedState.steps[0].contentHtml)
+        assertEquals("First", reorderedState.steps[1].contentHtml)
     }
 
     @Test
