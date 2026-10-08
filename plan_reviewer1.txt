@@ -1,0 +1,16 @@
+You are "Code Reviewer 1" (Flash). We are fixing critical bugs in RichTextEditor.kt.
+Bugs:
+1. Every typed letter goes to a new line.
+   Root cause: When typing, `onValueChange` adds active `toggledSpans` to the newly inserted character (insertStart..insertEnd). If an ALIGN_* or *_LIST span is added to a single character, Compose's `ParagraphStyle` forces that character into a new paragraph, wrapping it in newlines!
+2. Alignment toggling is broken.
+   Root cause: Alignment should apply to the entire paragraph, not just selected text or future typed characters.
+
+Your task:
+Rewrite the state management and `onValueChange` logic in `RichTextEditor.kt`.
+- Create a helper `fun SpanType.isParagraphStyle() = this in listOf(SpanType.ALIGN_LEFT, SpanType.ALIGN_CENTER, SpanType.ALIGN_RIGHT, SpanType.BULLET_LIST, SpanType.NUMBERED_LIST)`
+- In `onValueChange`, when adding `newToggledSpans` to newly typed text, ONLY add them if `!spanType.isParagraphStyle()`. Paragraph styles should NOT be applied character-by-character.
+- Wait, how do paragraph styles get applied to new text? When you press Enter, if a paragraph style is active, it should be copied to the new paragraph. Actually, if `spanType.isParagraphStyle()` is in `toggledSpans`, and the user types, the whole current paragraph should have that span.
+- In `applyToggle`: If `spanType.isParagraphStyle()`, find the paragraph boundaries `(start = lastIndexOf('\n') + 1, end = indexOf('\n'))` around the selection. Apply the span to the WHOLE paragraph immediately, rather than just adding it to `toggledSpans` for future typing.
+- Ensure the invisible bullets issue is fixed. (Check `RichTextMapper.kt` if `TextIndent` is pushing them out, or if they are inserted correctly).
+
+Generate the updated `RichTextEditor.kt` logic. Only output the Kotlin code.

@@ -1,0 +1,11 @@
+Please review and improve the logic for RichTextEditor in Jetpack Compose.
+There are two issues to fix:
+1. Keyboard covering the text field: We need the screen to scroll or resize (using `imePadding` and `verticalScroll` with a fallback min height) so the OutlinedTextField is always accessible above the keyboard. Currently `OutlinedTextField` has `weight(1f)` in a `Column`.
+2. Bullet/Number lists: Currently, pressing Enter just adds `\n` but doesn't automatically insert a bullet `• ` or a number `1. `. When `SpanType.BULLET_LIST` or `SpanType.NUMBERED_LIST` is active, pressing Enter should automatically insert `\n• ` or `\n2. `, etc. Also, if the user presses Enter on an empty list item (e.g., just `• `), it should exit the list format instead of adding another empty bullet.
+
+Write an initial implementation of `RichTextEditor.kt` solving these issues. Focus on:
+- Adding `Modifier.imePadding()` and `verticalScroll`.
+- In `onValueChange`, detecting if a `\n` was inserted, and if so, appending the bullet/number string based on `toggledSpans`. Also detect if they are hitting Enter on an empty bullet line to disable the list.
+
+Here is the current code for reference (see app/src/main/java/pl/wluczak/care_me/presentation/activity_detail/RichTextEditor.kt).
+Return the updated code or suggestions.

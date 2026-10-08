@@ -1,0 +1,5 @@
+You are "Code Reviewer 2" (Flash). Code Reviewer 1 has fixed the ParagraphStyle bug.
+Please perform a final verification of the `RichTextEditor.kt` logic.
+Ensure cursor boundaries and text mutations are flawless.
+Especially check if typing regular letters works, if Enter creates a new line with or without bullet, and if paragraphs maintain their spans.
+If you find any bugs, fix them. If it's flawless, just say "Looks good".

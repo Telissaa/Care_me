@@ -1,0 +1,1 @@
+Please write down what you changed in `RichTextEditor.kt`. You said you updated the file but you didn't output code. I'm taking care of writing it.
