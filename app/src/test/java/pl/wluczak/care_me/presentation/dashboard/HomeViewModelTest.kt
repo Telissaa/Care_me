@@ -17,7 +17,6 @@ import org.junit.Test
 import pl.wluczak.care_me.core.util.DispatcherProvider
 import pl.wluczak.care_me.domain.model.Activity
 import pl.wluczak.care_me.domain.model.Reminder
-import pl.wluczak.care_me.domain.model.Step
 import pl.wluczak.care_me.domain.repository.ActivityRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -106,13 +105,11 @@ class HomeViewModelTest {
             activitiesFlow.value = activities.toList()
         }
 
-        override fun getStepsForActivity(activityId: Long): Flow<List<Step>> = throw NotImplementedError()
-        override suspend fun insertStep(step: Step): Long = throw NotImplementedError()
-        override suspend fun insertSteps(steps: List<Step>): List<Long> = throw NotImplementedError()
-        override suspend fun updateStep(step: Step) = throw NotImplementedError()
-        override suspend fun updateSteps(steps: List<Step>) = throw NotImplementedError()
-        override suspend fun deleteStep(step: Step) = throw NotImplementedError()
-        override suspend fun deleteStepById(id: Long) = throw NotImplementedError()
+        override suspend fun deleteActivityById(id: Long) {
+            activities.removeIf { it.id == id }
+            activitiesFlow.value = activities.toList()
+        }
+        
         private val remindersFlow = MutableStateFlow<List<Reminder>>(emptyList())
 
         override fun getRemindersForActivity(activityId: Long): Flow<List<Reminder>> = throw NotImplementedError()

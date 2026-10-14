@@ -5,12 +5,12 @@ import pl.wluczak.care_me.domain.model.LegacySpanType
 
 @Suppress("DEPRECATION")
 object LegacyToHtmlConverter {
+    private data class Insertion(val index: Int, val tag: String, val isClose: Boolean, val start: Int, val spanLength: Int)
+
     fun convert(content: LegacyRichTextContent): String {
         val sb = StringBuilder(content.rawText)
         
-        // Very basic best-effort parsing: insert closing tags, then opening tags, from end to start
-        // to not mess up indices.
-        val insertions = mutableListOf<Pair<Int, String>>()
+        val insertions = mutableListOf<Insertion>()
         
         for (span in content.spans) {
             val openTag = when (span.type) {
@@ -37,26 +37,33 @@ object LegacyToHtmlConverter {
                 LegacySpanType.ALIGN_RIGHT -> "</div>"
                 LegacySpanType.ALIGN_CENTER -> "</div>"
             }
-            insertions.add(Pair(span.end, closeTag))
-            insertions.add(Pair(span.start, openTag))
+            val spanLength = span.end - span.start
+            insertions.add(Insertion(span.end, closeTag, isClose = true, start = span.start, spanLength = spanLength))
+            insertions.add(Insertion(span.start, openTag, isClose = false, start = span.start, spanLength = spanLength))
         }
         
-        // Sort by index descending. To avoid nested tag issues like <b><i>Text</b></i>
-        // we should sort closing tags first if they are at the same index
-        insertions.sortWith(Comparator { a, b -> 
-            if (a.first != b.first) {
-                b.first.compareTo(a.first) // descending order
+        // Sort descending by index
+        insertions.sortWith(Comparator { a, b ->
+            if (a.index != b.index) {
+                b.index.compareTo(a.index)
             } else {
-                // If same index, insert closing tag BEFORE opening tag
-                if (a.second.startsWith("</") && !b.second.startsWith("</")) -1
-                else if (!a.second.startsWith("</") && b.second.startsWith("</")) 1
-                else 0
+                when {
+                    // Close tag should be inserted before Open tag at same index
+                    a.isClose && !b.isClose -> -1
+                    !a.isClose && b.isClose -> 1
+                    // For two Close tags at same index: outer span (larger length / smaller start) should be inserted FIRST,
+                    // so the inner span's close tag is inserted second (at the same index), making it appear BEFORE the outer close tag.
+                    a.isClose && b.isClose -> b.spanLength.compareTo(a.spanLength)
+                    // For two Open tags at same index: outer span (larger length) should be inserted SECOND,
+                    // so it appears BEFORE the inner open tag in string.
+                    else -> a.spanLength.compareTo(b.spanLength)
+                }
             }
         })
         
-        for ((index, tag) in insertions) {
-            if (index in 0..sb.length) {
-                sb.insert(index, tag)
+        for (ins in insertions) {
+            if (ins.index in 0..sb.length) {
+                sb.insert(ins.index, ins.tag)
             }
         }
         

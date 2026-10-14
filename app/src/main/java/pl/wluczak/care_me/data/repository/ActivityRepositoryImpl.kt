@@ -1,23 +1,16 @@
 package pl.wluczak.care_me.data.repository
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import pl.wluczak.care_me.core.util.DispatcherProvider
-import pl.wluczak.care_me.data.converter.LegacyToHtmlConverter
 import pl.wluczak.care_me.data.local.ActivityDao
 import pl.wluczak.care_me.data.local.ReminderDao
-import pl.wluczak.care_me.data.local.StepDao
 import pl.wluczak.care_me.data.mapper.toDomain
 import pl.wluczak.care_me.data.mapper.toEntity
 import pl.wluczak.care_me.domain.model.Activity
 import pl.wluczak.care_me.domain.model.Reminder
-import pl.wluczak.care_me.domain.model.Step
 import pl.wluczak.care_me.domain.repository.ActivityRepository
 
 /**
@@ -25,7 +18,6 @@ import pl.wluczak.care_me.domain.repository.ActivityRepository
  */
 class ActivityRepositoryImpl(
     private val activityDao: ActivityDao,
-    private val stepDao: StepDao,
     private val reminderDao: ReminderDao,
     private val dispatchers: DispatcherProvider,
 ) : ActivityRepository {
@@ -63,62 +55,6 @@ class ActivityRepositoryImpl(
     override suspend fun deleteActivityById(id: Long) {
         withContext(dispatchers.io) {
             activityDao.deleteActivityById(id)
-        }
-    }
-
-    override fun getStepsForActivity(activityId: Long): Flow<List<Step>> {
-        return stepDao.getStepsForActivity(activityId)
-            .map { list ->
-                list.map { entity ->
-                    if (entity.contentHtml == null) {
-                        val html = LegacyToHtmlConverter.convert(entity.content)
-                        val updatedEntity = entity.copy(contentHtml = html)
-                        // Launch in application scope IO dispatcher so it isn't cancelled
-                        CoroutineScope(dispatchers.io + SupervisorJob()).launch {
-                            stepDao.updateStep(updatedEntity)
-                        }
-                        updatedEntity.toDomain()
-                    } else {
-                        entity.toDomain()
-                    }
-                }
-            }
-            .flowOn(dispatchers.io)
-    }
-
-    override suspend fun insertStep(step: Step): Long {
-        return withContext(dispatchers.io) {
-            stepDao.insertStep(step.toEntity())
-        }
-    }
-
-    override suspend fun insertSteps(steps: List<Step>): List<Long> {
-        return withContext(dispatchers.io) {
-            stepDao.insertSteps(steps.map { it.toEntity() })
-        }
-    }
-
-    override suspend fun updateStep(step: Step) {
-        withContext(dispatchers.io) {
-            stepDao.updateStep(step.toEntity())
-        }
-    }
-
-    override suspend fun updateSteps(steps: List<Step>) {
-        withContext(dispatchers.io) {
-            stepDao.updateSteps(steps.map { it.toEntity() })
-        }
-    }
-
-    override suspend fun deleteStep(step: Step) {
-        withContext(dispatchers.io) {
-            stepDao.deleteStep(step.toEntity())
-        }
-    }
-
-    override suspend fun deleteStepById(id: Long) {
-        withContext(dispatchers.io) {
-            stepDao.deleteStepById(id)
         }
     }
 

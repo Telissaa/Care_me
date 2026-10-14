@@ -26,7 +26,7 @@ val appModule = module {
         }
     }
 
-    single<ActivityRepository> { ActivityRepositoryImpl(get(), get(), get(), get()) }
+    single<ActivityRepository> { ActivityRepositoryImpl(get(), get(), get()) }
     single<UvRepository> { UvRepositoryImpl(get(), get()) }
     single<SettingsRepository> { SettingsRepositoryImpl(get<Context>().dataStore) }
 

@@ -7,20 +7,18 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import pl.wluczak.care_me.data.local.entity.ActivityEntity
 import pl.wluczak.care_me.data.local.entity.ReminderEntity
-import pl.wluczak.care_me.data.local.entity.StepEntity
 
 /**
  * Room AppDatabase declaration for Care me app.
  */
 @Database(
-    entities = [ActivityEntity::class, StepEntity::class, ReminderEntity::class],
-    version = 4,
+    entities = [ActivityEntity::class, ReminderEntity::class],
+    version = 5,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun activityDao(): ActivityDao
-    abstract fun stepDao(): StepDao
     abstract fun reminderDao(): ReminderDao
 
     companion object {

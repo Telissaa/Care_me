@@ -26,6 +26,5 @@ val databaseModule = module {
     }
 
     single { get<AppDatabase>().activityDao() }
-    single { get<AppDatabase>().stepDao() }
     single { get<AppDatabase>().reminderDao() }
 }

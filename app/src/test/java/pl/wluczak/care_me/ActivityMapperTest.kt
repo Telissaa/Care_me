@@ -4,10 +4,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import pl.wluczak.care_me.data.local.entity.ActivityEntity
 import pl.wluczak.care_me.data.local.entity.ReminderEntity
-import pl.wluczak.care_me.data.local.entity.StepEntity
 import pl.wluczak.care_me.data.mapper.toDomain
 import pl.wluczak.care_me.data.mapper.toEntity
-import pl.wluczak.care_me.domain.model.RichTextContent
 
 class ActivityMapperTest {
 
@@ -17,21 +15,6 @@ class ActivityMapperTest {
             id = 1,
             name = "Morning Routine",
             iconResId = 123,
-        )
-
-        val domain = entity.toDomain()
-        val mappedEntity = domain.toEntity()
-
-        assertEquals(entity, mappedEntity)
-    }
-
-    @Test
-    fun stepEntity_toDomainAndBack_isSymmetric() {
-        val entity = StepEntity(
-            id = 10,
-            activityId = 1,
-            orderIndex = 0,
-            content = RichTextContent(rawText = "Wash face"),
         )
 
         val domain = entity.toDomain()

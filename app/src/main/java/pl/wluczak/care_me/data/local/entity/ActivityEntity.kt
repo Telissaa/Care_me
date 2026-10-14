@@ -11,6 +11,7 @@ data class ActivityEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,
+    val descriptionHtml: String = "",
     val iconResId: Int = 0,
     val iconName: String = "face",
     val colorHex: String = "#D4F5FF",

@@ -13,19 +13,15 @@ import org.junit.Test
 import pl.wluczak.care_me.core.util.DispatcherProvider
 import pl.wluczak.care_me.data.local.ActivityDao
 import pl.wluczak.care_me.data.local.ReminderDao
-import pl.wluczak.care_me.data.local.StepDao
 import pl.wluczak.care_me.data.local.entity.ActivityEntity
 import pl.wluczak.care_me.data.local.entity.ReminderEntity
-import pl.wluczak.care_me.data.local.entity.StepEntity
 import pl.wluczak.care_me.data.repository.ActivityRepositoryImpl
 import pl.wluczak.care_me.domain.model.Activity
 import pl.wluczak.care_me.domain.model.Reminder
-import pl.wluczak.care_me.domain.model.Step
 
 class ActivityRepositoryImplTest {
 
     private lateinit var fakeActivityDao: FakeActivityDao
-    private lateinit var fakeStepDao: FakeStepDao
     private lateinit var fakeReminderDao: FakeReminderDao
     private lateinit var repository: ActivityRepositoryImpl
 
@@ -39,9 +35,8 @@ class ActivityRepositoryImplTest {
     @Before
     fun setUp() {
         fakeActivityDao = FakeActivityDao()
-        fakeStepDao = FakeStepDao()
         fakeReminderDao = FakeReminderDao()
-        repository = ActivityRepositoryImpl(fakeActivityDao, fakeStepDao, fakeReminderDao, testDispatcherProvider)
+        repository = ActivityRepositoryImpl(fakeActivityDao, fakeReminderDao, testDispatcherProvider)
     }
 
     @Test
@@ -81,22 +76,6 @@ class ActivityRepositoryImplTest {
         repository.deleteActivity(updatedActivity)
         val fetchedAfterDelete = repository.getAllActivities().first()
         assertEquals(0, fetchedAfterDelete.size)
-    }
-
-    @Test
-    fun stepOperations_insertBatchAndGet_worksCorrectly() = runBlocking {
-        val steps = listOf(
-            Step(id = 1, activityId = 1, orderIndex = 0, contentHtml = "Step 1"),
-            Step(id = 2, activityId = 1, orderIndex = 1, contentHtml = "Step 2"),
-        )
-
-        repository.insertSteps(steps)
-
-        val fetchedSteps = repository.getStepsForActivity(1).first()
-
-        assertEquals(2, fetchedSteps.size)
-        assertEquals("Step 1", fetchedSteps[0].contentHtml)
-        assertEquals("Step 2", fetchedSteps[1].contentHtml)
     }
 
     @Test
@@ -158,55 +137,10 @@ class ActivityRepositoryImplTest {
             activities.removeAll { it.id == activity.id }
             flow.value = activities.toList()
         }
-    }
 
-    private class FakeStepDao : StepDao {
-        private val steps = mutableListOf<StepEntity>()
-        private val flowMap = mutableMapOf<Long, MutableStateFlow<List<StepEntity>>>()
-
-        private fun getFlowForActivity(activityId: Long): MutableStateFlow<List<StepEntity>> {
-            return flowMap.getOrPut(activityId) {
-                MutableStateFlow(steps.filter { it.activityId == activityId }.sortedBy { it.orderIndex })
-            }
-        }
-
-        override fun getStepsForActivity(activityId: Long): Flow<List<StepEntity>> {
-            return getFlowForActivity(activityId)
-        }
-
-        override suspend fun insertStep(step: StepEntity): Long {
-            steps.add(step)
-            getFlowForActivity(step.activityId).value = steps.filter { it.activityId == step.activityId }.sortedBy { it.orderIndex }
-            return step.id
-        }
-
-        override suspend fun insertSteps(steps: List<StepEntity>): List<Long> {
-            steps.forEach { insertStep(it) }
-            return steps.map { it.id }
-        }
-
-        override suspend fun updateStep(step: StepEntity) {
-            val index = this.steps.indexOfFirst { it.id == step.id }
-            if (index != -1) {
-                this.steps[index] = step
-                getFlowForActivity(step.activityId).value = this.steps.filter { it.activityId == step.activityId }.sortedBy { it.orderIndex }
-            }
-        }
-
-        override suspend fun updateSteps(steps: List<StepEntity>) {
-            steps.forEach { updateStep(it) }
-        }
-
-        override suspend fun deleteStep(step: StepEntity) {
-            deleteStepById(step.id)
-        }
-
-        override suspend fun deleteStepById(id: Long) {
-            val step = steps.find { it.id == id }
-            if (step != null) {
-                steps.remove(step)
-                getFlowForActivity(step.activityId).value = steps.filter { it.activityId == step.activityId }.sortedBy { it.orderIndex }
-            }
+        override suspend fun deleteActivityById(id: Long) {
+            activities.removeAll { it.id == id }
+            flow.value = activities.toList()
         }
     }
 
