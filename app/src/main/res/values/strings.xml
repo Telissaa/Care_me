@@ -22,4 +22,18 @@
     <string name="select_circle_color">Choose circle color:</string>
     <string name="select_icon">Choose icon:</string>
     <string name="default_notification_title">Notification</string>
+    <string name="delete_activity_title">Delete activity</string>
+    <string name="delete_activity_confirmation">Are you sure you want to delete this activity?</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_scroll_left">Scroll left</string>
+    <string name="cd_scroll_right">Scroll right</string>
+    <string name="editor_bold">Bold</string>
+    <string name="editor_italic">Italic</string>
+    <string name="editor_underline">Underline</string>
+    <string name="editor_strikethrough">Strikethrough</string>
+    <string name="editor_bullet_list">Bullet list</string>
+    <string name="editor_numbered_list">Numbered list</string>
+    <string name="editor_choose_color">Choose text color</string>
 </resources>

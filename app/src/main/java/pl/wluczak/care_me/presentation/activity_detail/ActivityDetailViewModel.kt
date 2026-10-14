@@ -100,4 +100,18 @@ class ActivityDetailViewModel(
             activityRepository.updateActivity(updatedActivity)
         }
     }
+
+    /**
+     * Deletes the current activity and triggers [onSuccess] callback when completed.
+     */
+    fun deleteActivity(onSuccess: () -> Unit) {
+        viewModelScope.launch(dispatcherProvider.io) {
+            if (currentActivityId > 0) {
+                activityRepository.deleteActivityById(currentActivityId)
+            }
+            withContext(dispatcherProvider.main) {
+                onSuccess()
+            }
+        }
+    }
 }

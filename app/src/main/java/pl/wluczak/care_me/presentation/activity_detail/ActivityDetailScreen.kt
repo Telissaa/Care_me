@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,11 +30,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,9 +58,45 @@ fun ActivityDetailScreen(
     viewModel: ActivityDetailViewModel = koinViewModel(parameters = { parametersOf(activityId) })
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showDeleteDialog by remember { mutableStateOf(false) }
     
     val backgroundColor = remember(uiState.activity?.colorHex) {
         uiState.activity?.colorHex?.let { parseHexColor(it) } ?: Color(0xFFE3F2FD)
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = {
+                Text(text = stringResource(id = R.string.delete_activity_title))
+            },
+            text = {
+                Text(text = stringResource(id = R.string.delete_activity_confirmation))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        viewModel.deleteActivity(onSuccess = onBackClick)
+                    }
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDeleteDialog = false }
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.cancel),
+                        color = Color.DarkGray
+                    )
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -70,7 +110,7 @@ fun ActivityDetailScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = R.string.cd_back)
                         )
                     }
                 },
@@ -85,35 +125,35 @@ fun ActivityDetailScreen(
                 if (uiState.isEditing) {
                     FloatingActionButton(
                         onClick = { viewModel.toggleEditMode() },
-                        containerColor = Color(0xFFD0FCC7) // Tea Green from theme roughly
+                        containerColor = MaterialTheme.colorScheme.tertiary
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Check,
-                            contentDescription = "Save",
-                            tint = Color.Black
+                            contentDescription = stringResource(id = R.string.save),
+                            tint = MaterialTheme.colorScheme.onTertiary
                         )
                     }
                 } else {
                     Row {
                         FloatingActionButton(
-                            onClick = { /* TODO: Implement delete */ },
-                            containerColor = Color(0xFFFFD4D4) // Light red
+                            onClick = { showDeleteDialog = true },
+                            containerColor = MaterialTheme.colorScheme.errorContainer
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Delete,
-                                contentDescription = "Delete",
-                                tint = Color(0xFFBA1A1A)
+                                contentDescription = stringResource(id = R.string.delete),
+                                tint = MaterialTheme.colorScheme.onErrorContainer
                             )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         FloatingActionButton(
                             onClick = { viewModel.toggleEditMode() },
-                            containerColor = Color.White
+                            containerColor = MaterialTheme.colorScheme.surface
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Edit,
-                                contentDescription = "Edit",
-                                tint = Color(0xFF5D245A)
+                                contentDescription = stringResource(id = R.string.edit),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }

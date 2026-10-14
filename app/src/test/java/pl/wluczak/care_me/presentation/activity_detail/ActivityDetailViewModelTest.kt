@@ -88,6 +88,18 @@ class ActivityDetailViewModelTest {
         assertEquals("Apply cleanser", updatedState.descriptionAnnotatedString?.text)
     }
 
+    @Test
+    fun `deleteActivity deletes activity and invokes onSuccess`() = runBlocking {
+        var onSuccessCalled = false
+        viewModel.deleteActivity {
+            onSuccessCalled = true
+        }
+
+        assertTrue(onSuccessCalled)
+        val activity = fakeRepository.getActivityById(1L).first()
+        assertEquals(null, activity)
+    }
+
     private class FakeActivityRepository : ActivityRepository {
         private val activities = mutableListOf<Activity>()
         private val activitiesFlow = MutableStateFlow<List<Activity>>(emptyList())

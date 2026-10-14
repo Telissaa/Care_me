@@ -55,6 +55,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -65,6 +66,7 @@ import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import pl.wluczak.care_me.R
 import pl.wluczak.care_me.presentation.dashboard.components.AVAILABLE_COLORS
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -126,7 +128,7 @@ fun RichTextEditor(
                         IconButton(onClick = { scope.launch { scrollState.animateScrollBy(-300f) } }) {
                             Icon(
                                 imageVector = Icons.Default.ChevronLeft, 
-                                contentDescription = "Scroll Left", 
+                                contentDescription = stringResource(id = R.string.cd_scroll_left), 
                                 tint = Color.Gray
                             )
                         }
@@ -141,37 +143,37 @@ fun RichTextEditor(
                 ) {
                     FormatToggleButton(
                         icon = Icons.Default.FormatBold,
-                        description = "Bold",
+                        description = stringResource(id = R.string.editor_bold),
                         isActive = isBold,
                         onClick = { state.toggleSpanStyle(SpanStyle(fontWeight = FontWeight.Bold)) }
                     )
                     FormatToggleButton(
                         icon = Icons.Default.FormatItalic,
-                        description = "Italic",
+                        description = stringResource(id = R.string.editor_italic),
                         isActive = isItalic,
                         onClick = { state.toggleSpanStyle(SpanStyle(fontStyle = FontStyle.Italic)) }
                     )
                     FormatToggleButton(
                         icon = Icons.Default.FormatUnderlined,
-                        description = "Underline",
+                        description = stringResource(id = R.string.editor_underline),
                         isActive = isUnderlined,
                         onClick = { state.toggleSpanStyle(SpanStyle(textDecoration = TextDecoration.Underline)) }
                     )
                     FormatToggleButton(
                         icon = Icons.Default.StrikethroughS,
-                        description = "Strike",
+                        description = stringResource(id = R.string.editor_strikethrough),
                         isActive = isStrikethrough,
                         onClick = { state.toggleSpanStyle(SpanStyle(textDecoration = TextDecoration.LineThrough)) }
                     )
                     FormatToggleButton(
                         icon = Icons.AutoMirrored.Filled.FormatListBulleted,
-                        description = "Bullet List",
+                        description = stringResource(id = R.string.editor_bullet_list),
                         isActive = isUnorderedList,
                         onClick = { state.toggleUnorderedList() }
                     )
                     FormatToggleButton(
                         icon = Icons.Default.FormatListNumbered,
-                        description = "Numbered List",
+                        description = stringResource(id = R.string.editor_numbered_list),
                         isActive = isOrderedList,
                         onClick = { state.toggleOrderedList() }
                     )
@@ -199,7 +201,7 @@ fun RichTextEditor(
                         IconButton(onClick = { scope.launch { scrollState.animateScrollBy(300f) } }) {
                             Icon(
                                 imageVector = Icons.Default.ChevronRight, 
-                                contentDescription = "Scroll Right", 
+                                contentDescription = stringResource(id = R.string.cd_scroll_right), 
                                 tint = Color.Gray
                             )
                         }
