@@ -18,6 +18,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -63,8 +73,38 @@ fun ActivityDetailScreen(
     val backgroundColor = remember(uiState.activity?.colorHex) {
         uiState.activity?.colorHex?.let { parseHexColor(it) } ?: Color(0xFFE3F2FD)
     }
+    
+    var isDrawerOpen by remember { mutableStateOf(false) }
+    
+    BackHandler(enabled = isDrawerOpen) {
+        isDrawerOpen = false
+    }
 
-    if (showDeleteDialog) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                var dragOffset = 0f
+                detectHorizontalDragGestures(
+                    onDragStart = { dragOffset = 0f },
+                    onDragEnd = { dragOffset = 0f },
+                    onDragCancel = { dragOffset = 0f },
+                    onHorizontalDrag = { change, dragAmount ->
+                        dragOffset += dragAmount
+                        if (dragOffset < -50f && !isDrawerOpen) {
+                            isDrawerOpen = true
+                            change.consume()
+                            dragOffset = 0f // Reset after triggering
+                        } else if (dragOffset > 50f && isDrawerOpen) {
+                            isDrawerOpen = false
+                            change.consume()
+                            dragOffset = 0f // Reset after triggering
+                        }
+                    }
+                )
+            }
+    ) {
+        if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             title = {
@@ -105,6 +145,14 @@ fun ActivityDetailScreen(
             TopAppBar(
                 title = {
                     Text(text = uiState.activity?.name ?: stringResource(id = R.string.activity_detail_title))
+                },
+                actions = {
+                    IconButton(onClick = { isDrawerOpen = !isDrawerOpen }) {
+                        Icon(
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "Notifications"
+                        )
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
@@ -224,6 +272,37 @@ fun ActivityDetailScreen(
                     }
                 }
             }
+        }
+    }
+        
+        // Notification Drawer Scrim
+        AnimatedVisibility(
+            visible = isDrawerOpen,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f))
+                    .clickable { isDrawerOpen = false }
+            )
+        }
+
+        // Notification Drawer Overlay
+        AnimatedVisibility(
+            visible = isDrawerOpen,
+            enter = slideInHorizontally(initialOffsetX = { it }),
+            exit = slideOutHorizontally(targetOffsetX = { it }),
+            modifier = Modifier.align(Alignment.CenterEnd)
+        ) {
+            NotificationDrawerContent(
+                reminders = uiState.reminders,
+                onAddReminder = { viewModel.addEmptyReminder() },
+                onUpdateReminder = { viewModel.updateReminder(it) },
+                onDeleteReminder = { viewModel.deleteReminder(it) }
+            )
         }
     }
 }

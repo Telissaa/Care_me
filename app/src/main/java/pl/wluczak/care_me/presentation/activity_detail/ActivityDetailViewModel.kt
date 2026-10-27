@@ -19,9 +19,12 @@ import pl.wluczak.care_me.core.util.DispatcherProvider
 import pl.wluczak.care_me.domain.model.Activity
 import pl.wluczak.care_me.domain.repository.ActivityRepository
 
+import pl.wluczak.care_me.domain.model.Reminder
+
 data class ActivityDetailUiState(
     val activity: Activity? = null,
     val descriptionAnnotatedString: AnnotatedString? = null,
+    val reminders: List<Reminder> = emptyList(),
     val isLoading: Boolean = true,
     val isEditing: Boolean = false
 )
@@ -40,6 +43,49 @@ class ActivityDetailViewModel(
 
     init {
         loadActivityDetails()
+        loadReminders()
+    }
+
+    private fun loadReminders() {
+        activityRepository.getRemindersForActivity(currentActivityId)
+            .onEach { remindersList ->
+                _uiState.update { it.copy(reminders = remindersList) }
+            }
+            .flowOn(dispatcherProvider.io)
+            .launchIn(viewModelScope)
+    }
+
+    fun addEmptyReminder() {
+        viewModelScope.launch(dispatcherProvider.io) {
+            val newReminder = Reminder(
+                activityId = currentActivityId,
+                timeInMillis = System.currentTimeMillis(),
+                isRepeating = false,
+                title = "",
+                descriptionHtml = "",
+                startTimeHour = 8,
+                startTimeMinute = 0,
+                endTimeHour = 9,
+                endTimeMinute = 0,
+                repeatType = "DAYS_OF_WEEK",
+                repeatDaysOfWeek = "",
+                repeatInterval = 1,
+                colorHex = ""
+            )
+            activityRepository.insertReminder(newReminder)
+        }
+    }
+
+    fun updateReminder(reminder: Reminder) {
+        viewModelScope.launch(dispatcherProvider.io) {
+            activityRepository.updateReminder(reminder)
+        }
+    }
+
+    fun deleteReminder(reminder: Reminder) {
+        viewModelScope.launch(dispatcherProvider.io) {
+            activityRepository.deleteReminder(reminder)
+        }
     }
 
     private suspend fun parseHtml(html: String): AnnotatedString {

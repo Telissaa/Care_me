@@ -68,6 +68,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pl.wluczak.care_me.R
 import pl.wluczak.care_me.presentation.dashboard.components.AVAILABLE_COLORS
+import pl.wluczak.care_me.ui.theme.ThistleDark
+import pl.wluczak.care_me.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -75,7 +77,7 @@ fun RichTextEditor(
     value: String,
     onValueChange: (String) -> Unit,
     isEditing: Boolean,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.background(White, RoundedCornerShape(12.dp)),
     editorBackgroundColor: Color = Color.Transparent
 ) {
     val state = rememberRichTextState()
@@ -218,7 +220,8 @@ fun RichTextEditor(
                     state = state,
                     colors = RichTextEditorDefaults.outlinedRichTextEditorColors(
                         focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent
+                        unfocusedBorderColor = Color.Transparent,
+                        cursorColor = ThistleDark
                     ),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier

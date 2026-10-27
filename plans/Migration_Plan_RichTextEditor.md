@@ -1,4 +1,4 @@
-# Migration Plan: compose-rich-editor
+# Migration Plan: compose-rich-editor - DONE
 
 ## 1. Setup & Dependencies
 - Add dependency `com.mohamedrejeb.richeditor:richeditor-compose:<latest-stable-version>` to `app/build.gradle`.

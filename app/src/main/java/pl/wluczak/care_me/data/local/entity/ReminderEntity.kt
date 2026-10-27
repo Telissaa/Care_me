@@ -25,5 +25,15 @@ data class ReminderEntity(
     val id: Long = 0,
     val activityId: Long,
     val timeInMillis: Long,
-    val isRepeating: Boolean
+    val isRepeating: Boolean,
+    val title: String = "",
+    val descriptionHtml: String = "",
+    val startTimeHour: Int = 8,
+    val startTimeMinute: Int = 0,
+    val endTimeHour: Int = 9,
+    val endTimeMinute: Int = 0,
+    val repeatType: String = "DAYS_OF_WEEK",
+    val repeatDaysOfWeek: String = "",
+    val repeatInterval: Int = 1,
+    val colorHex: String = ""
 )

@@ -5,7 +5,10 @@ import pl.wluczak.care_me.domain.model.Activity
 data class NotificationItem(
     val id: Long,
     val activityName: String,
-    val timeRange: String
+    val timeRange: String,
+    val notificationTitle: String? = null,
+    val description: String = "",
+    val repeatDays: String = ""
 )
 
 data class HomeState(

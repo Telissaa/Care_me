@@ -21,7 +21,7 @@
     <string name="empty_activities_msg">No activities. Tap + to add.</string>
     <string name="select_circle_color">Choose circle color:</string>
     <string name="select_icon">Choose icon:</string>
-    <string name="default_notification_title">Notification</string>
+    <string name="default_notification_title">Powiadomienie</string>
     <string name="delete_activity_title">Delete activity</string>
     <string name="delete_activity_confirmation">Are you sure you want to delete this activity?</string>
     <string name="delete">Delete</string>

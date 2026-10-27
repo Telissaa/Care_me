@@ -134,11 +134,12 @@ class ActivityDetailViewModelTest {
             activitiesFlow.value = activities.toList()
         }
 
-        override fun getRemindersForActivity(activityId: Long) = throw NotImplementedError()
-        override fun getAllReminders(): Flow<List<Reminder>> = throw NotImplementedError()
-        override suspend fun insertReminder(reminder: Reminder) = throw NotImplementedError()
-        override suspend fun updateReminder(reminder: Reminder) = throw NotImplementedError()
-        override suspend fun deleteReminder(reminder: Reminder) = throw NotImplementedError()
-        override suspend fun deleteReminderById(id: Long) = throw NotImplementedError()
+        private val remindersFlow = MutableStateFlow<List<Reminder>>(emptyList())
+        override fun getRemindersForActivity(activityId: Long): Flow<List<Reminder>> = MutableStateFlow(emptyList())
+        override fun getAllReminders(): Flow<List<Reminder>> = remindersFlow
+        override suspend fun insertReminder(reminder: Reminder): Long = 1L
+        override suspend fun updateReminder(reminder: Reminder) {}
+        override suspend fun deleteReminder(reminder: Reminder) {}
+        override suspend fun deleteReminderById(id: Long) {}
     }
 }

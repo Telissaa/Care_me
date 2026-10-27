@@ -12,6 +12,16 @@ fun ReminderEntity.toDomain(): Reminder {
         activityId = activityId,
         timeInMillis = timeInMillis,
         isRepeating = isRepeating,
+        title = title,
+        descriptionHtml = descriptionHtml,
+        startTimeHour = startTimeHour,
+        startTimeMinute = startTimeMinute,
+        endTimeHour = endTimeHour,
+        endTimeMinute = endTimeMinute,
+        repeatType = repeatType,
+        repeatDaysOfWeek = repeatDaysOfWeek,
+        repeatInterval = repeatInterval,
+        colorHex = colorHex,
     )
 }
 
@@ -21,5 +31,15 @@ fun Reminder.toEntity(): ReminderEntity {
         activityId = activityId,
         timeInMillis = timeInMillis,
         isRepeating = isRepeating,
+        title = title,
+        descriptionHtml = descriptionHtml,
+        startTimeHour = startTimeHour,
+        startTimeMinute = startTimeMinute,
+        endTimeHour = endTimeHour,
+        endTimeMinute = endTimeMinute,
+        repeatType = repeatType,
+        repeatDaysOfWeek = repeatDaysOfWeek,
+        repeatInterval = repeatInterval,
+        colorHex = colorHex,
     )
 }
