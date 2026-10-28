@@ -154,7 +154,7 @@ fun AddActivityDialog(
                         isNameError = true
                     } else {
                         onConfirm(
-                            name.trim(),
+                            name.trim().replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.getDefault()) else it.toString() },
                             selectedColor.toHex(),
                             selectedIconName
                         )

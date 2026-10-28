@@ -351,7 +351,7 @@ fun NotificationCard(
                             showColorPicker = false
                             onUpdateReminder(
                                 reminder.copy(
-                                    title = editTitle,
+                                    title = editTitle.trim().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
                                     isRepeating = !(editRepeatType == "DAYS_OF_WEEK" && editRepeatDaysOfWeek.isEmpty()),
                                     startTimeHour = editStartTimeHour,
                                     startTimeMinute = editStartTimeMinute,
