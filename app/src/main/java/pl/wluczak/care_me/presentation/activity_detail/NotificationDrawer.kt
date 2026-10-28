@@ -22,6 +22,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -224,6 +226,7 @@ fun NotificationCard(
                         textStyle = LocalTextStyle.current.copy(fontSize = 18.sp, fontWeight = FontWeight.Bold),
                         placeholder = { Text("Tytuł", fontSize = 18.sp) },
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color.Black.copy(alpha = 0.5f),
                             unfocusedBorderColor = Color.Transparent
@@ -351,7 +354,7 @@ fun NotificationCard(
                             showColorPicker = false
                             onUpdateReminder(
                                 reminder.copy(
-                                    title = editTitle.trim().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
+                                    title = editTitle.trim(),
                                     isRepeating = !(editRepeatType == "DAYS_OF_WEEK" && editRepeatDaysOfWeek.isEmpty()),
                                     startTimeHour = editStartTimeHour,
                                     startTimeMinute = editStartTimeMinute,

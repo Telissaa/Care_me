@@ -19,6 +19,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +70,7 @@ fun AddActivityDialog(
                     label = { Text(stringResource(id = R.string.activity_name)) },
                     singleLine = true,
                     isError = isNameError,
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                     supportingText = if (isNameError) {
                         { Text(stringResource(id = R.string.error_name_required)) }
                     } else null,
@@ -154,7 +157,7 @@ fun AddActivityDialog(
                         isNameError = true
                     } else {
                         onConfirm(
-                            name.trim().replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.getDefault()) else it.toString() },
+                            name.trim(),
                             selectedColor.toHex(),
                             selectedIconName
                         )
