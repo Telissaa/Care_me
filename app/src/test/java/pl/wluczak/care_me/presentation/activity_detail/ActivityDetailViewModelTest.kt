@@ -48,6 +48,10 @@ class ActivityDetailViewModelTest {
         viewModel = ActivityDetailViewModel(
             activityId = 1L,
             activityRepository = fakeRepository,
+            reminderManager = object : pl.wluczak.care_me.domain.manager.ReminderManager {
+                override fun scheduleReminder(reminder: pl.wluczak.care_me.domain.model.Reminder) {}
+                override fun cancelReminder(reminderId: Long) {}
+            },
             dispatcherProvider = testDispatcherProvider
         )
     }
@@ -141,5 +145,6 @@ class ActivityDetailViewModelTest {
         override suspend fun updateReminder(reminder: Reminder) {}
         override suspend fun deleteReminder(reminder: Reminder) {}
         override suspend fun deleteReminderById(id: Long) {}
+        override suspend fun getReminderById(id: Long): Reminder? = remindersFlow.value.find { it.id == id }
     }
 }

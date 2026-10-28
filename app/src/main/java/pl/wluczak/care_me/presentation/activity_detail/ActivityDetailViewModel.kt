@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import pl.wluczak.care_me.core.util.DispatcherProvider
+import pl.wluczak.care_me.domain.manager.ReminderManager
 import pl.wluczak.care_me.domain.model.Activity
 import pl.wluczak.care_me.domain.repository.ActivityRepository
 
@@ -32,6 +33,7 @@ data class ActivityDetailUiState(
 class ActivityDetailViewModel(
     activityId: Long,
     private val activityRepository: ActivityRepository,
+    private val reminderManager: ReminderManager,
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
@@ -73,18 +75,22 @@ class ActivityDetailViewModel(
                 colorHex = ""
             )
             activityRepository.insertReminder(newReminder)
+            // Empty reminder doesn't have valid properties to schedule meaningfully, but user will edit it.
+            // Or maybe schedule it directly? Better schedule after they hit save.
         }
     }
 
     fun updateReminder(reminder: Reminder) {
         viewModelScope.launch(dispatcherProvider.io) {
             activityRepository.updateReminder(reminder)
+            reminderManager.scheduleReminder(reminder)
         }
     }
 
     fun deleteReminder(reminder: Reminder) {
         viewModelScope.launch(dispatcherProvider.io) {
             activityRepository.deleteReminder(reminder)
+            reminderManager.cancelReminder(reminder.id)
         }
     }
 

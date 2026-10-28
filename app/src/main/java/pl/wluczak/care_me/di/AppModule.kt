@@ -29,7 +29,8 @@ val appModule = module {
     single<ActivityRepository> { ActivityRepositoryImpl(get(), get(), get()) }
     single<UvRepository> { UvRepositoryImpl(get(), get()) }
     single<SettingsRepository> { SettingsRepositoryImpl(get<Context>().dataStore) }
+    single<pl.wluczak.care_me.domain.manager.ReminderManager> { pl.wluczak.care_me.data.manager.ReminderManagerImpl(get()) }
 
     viewModel { HomeViewModel(get(), get()) }
-    viewModel { (activityId: Long) -> ActivityDetailViewModel(activityId, get(), get()) }
+    viewModel { (activityId: Long) -> ActivityDetailViewModel(activityId, get(), get(), get()) }
 }

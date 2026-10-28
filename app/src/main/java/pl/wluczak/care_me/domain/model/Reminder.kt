@@ -34,4 +34,73 @@ data class Reminder(
                 repeatDaysOfWeek.split(",").mapNotNull { map[it.toIntOrNull()] }.joinToString(", ")
             }
         }
+
+    fun calculateNextAlarmTime(): Long {
+        val calendar = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, startTimeHour)
+            set(java.util.Calendar.MINUTE, startTimeMinute)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+
+        val now = System.currentTimeMillis()
+        if (calendar.timeInMillis <= now) {
+            // Alarm time today has passed, shift to next possible day
+            if (!isRepeating) {
+                // If it's a one-time alarm but the time has passed today, assume it's for tomorrow.
+                calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
+                return calendar.timeInMillis
+            }
+
+            if (repeatType == "INTERVAL") {
+                calendar.add(java.util.Calendar.DAY_OF_YEAR, repeatInterval)
+            } else if (repeatType == "DAYS_OF_WEEK" && repeatDaysOfWeek.isNotEmpty()) {
+                val selectedDays = repeatDaysOfWeek.split(",").mapNotNull { it.toIntOrNull() }
+                if (selectedDays.isNotEmpty()) {
+                    var addedDays = 1
+                    calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
+                    // Calendar.DAY_OF_WEEK is 1 (Sun) to 7 (Sat)
+                    // Our map: 1 to 7 is Monday to Sunday?
+                    // In UI map: 1(Pn) to 7(Nd). Let's convert Calendar day to our format:
+                    // Monday = 1, Sunday = 7
+                    while (addedDays <= 7) {
+                        val calDayOfWeek = calendar.get(java.util.Calendar.DAY_OF_WEEK)
+                        val ourDay = if (calDayOfWeek == java.util.Calendar.SUNDAY) 7 else calDayOfWeek - 1
+                        if (selectedDays.contains(ourDay)) {
+                            break
+                        }
+                        calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
+                        addedDays++
+                    }
+                } else {
+                    calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
+                }
+            } else {
+                calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
+            }
+        } else {
+            // If it's today but in the future, check if today is a valid day for DAYS_OF_WEEK
+            if (repeatType == "DAYS_OF_WEEK" && repeatDaysOfWeek.isNotEmpty()) {
+                val selectedDays = repeatDaysOfWeek.split(",").mapNotNull { it.toIntOrNull() }
+                if (selectedDays.isNotEmpty()) {
+                    val calDayOfWeek = calendar.get(java.util.Calendar.DAY_OF_WEEK)
+                    val ourDay = if (calDayOfWeek == java.util.Calendar.SUNDAY) 7 else calDayOfWeek - 1
+                    if (!selectedDays.contains(ourDay)) {
+                        var addedDays = 1
+                        calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
+                        while (addedDays <= 7) {
+                            val nextCalDayOfWeek = calendar.get(java.util.Calendar.DAY_OF_WEEK)
+                            val nextOurDay = if (nextCalDayOfWeek == java.util.Calendar.SUNDAY) 7 else nextCalDayOfWeek - 1
+                            if (selectedDays.contains(nextOurDay)) {
+                                break
+                            }
+                            calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
+                            addedDays++
+                        }
+                    }
+                }
+            }
+        }
+        return calendar.timeInMillis
+    }
 }

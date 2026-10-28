@@ -58,6 +58,12 @@ class ActivityRepositoryImpl(
         }
     }
 
+    override suspend fun getReminderById(id: Long): Reminder? {
+        return withContext(dispatchers.io) {
+            reminderDao.getReminderById(id)?.toDomain()
+        }
+    }
+
     override fun getRemindersForActivity(activityId: Long): Flow<List<Reminder>> {
         return reminderDao.getRemindersForActivity(activityId)
             .map { list -> list.map { it.toDomain() } }

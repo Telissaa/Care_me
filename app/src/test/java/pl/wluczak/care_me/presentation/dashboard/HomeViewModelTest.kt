@@ -118,5 +118,6 @@ class HomeViewModelTest {
         override suspend fun updateReminder(reminder: Reminder) = throw NotImplementedError()
         override suspend fun deleteReminder(reminder: Reminder) = throw NotImplementedError()
         override suspend fun deleteReminderById(id: Long) = throw NotImplementedError()
+        override suspend fun getReminderById(id: Long): Reminder? = remindersFlow.value.find { it.id == id }
     }
 }

@@ -195,5 +195,9 @@ class ActivityRepositoryImplTest {
                 notifyChanges(reminder.activityId)
             }
         }
+        
+        override suspend fun getReminderById(id: Long): ReminderEntity? {
+            return reminders.find { it.id == id }
+        }
     }
 }

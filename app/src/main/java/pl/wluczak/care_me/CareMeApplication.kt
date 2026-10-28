@@ -1,6 +1,9 @@
 package pl.wluczak.care_me
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -19,6 +22,20 @@ class CareMeApplication : Application() {
             }
             androidContext(this@CareMeApplication)
             modules(appModule, databaseModule, networkModule)
+        }
+        
+        createNotificationChannel()
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "reminder_channel",
+                "Care me Powiadomienia",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager?.createNotificationChannel(channel)
         }
     }
 }

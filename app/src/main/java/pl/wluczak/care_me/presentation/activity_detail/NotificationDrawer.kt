@@ -24,6 +24,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.os.Build
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.LocalContext
 import pl.wluczak.care_me.domain.model.Reminder
 import pl.wluczak.care_me.presentation.dashboard.components.AVAILABLE_COLORS
 import pl.wluczak.care_me.presentation.dashboard.components.parseHexColor
@@ -40,6 +47,32 @@ fun NotificationDrawerContent(
     onDeleteReminder: (Reminder) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                onAddReminder()
+            }
+        }
+    )
+
+    fun checkAndAddReminder() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val hasPermission = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+            if (hasPermission) {
+                onAddReminder()
+            } else {
+                launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        } else {
+            onAddReminder()
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxHeight()
@@ -68,7 +101,7 @@ fun NotificationDrawerContent(
         }
         
         FloatingActionButton(
-            onClick = onAddReminder,
+            onClick = { checkAndAddReminder() },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
@@ -319,6 +352,7 @@ fun NotificationCard(
                             onUpdateReminder(
                                 reminder.copy(
                                     title = editTitle,
+                                    isRepeating = !(editRepeatType == "DAYS_OF_WEEK" && editRepeatDaysOfWeek.isEmpty()),
                                     startTimeHour = editStartTimeHour,
                                     startTimeMinute = editStartTimeMinute,
                                     endTimeHour = editEndTimeHour,
