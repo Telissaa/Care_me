@@ -25,12 +25,17 @@ class HomeViewModel(
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
 
+    private val refreshTrigger = MutableStateFlow(System.currentTimeMillis())
+
     init {
         combine(
             activityRepository.getAllActivities(),
-            activityRepository.getAllReminders()
-        ) { activities, reminders ->
-            val todaysReminders = reminders.filter { isReminderForToday(it) }
+            activityRepository.getAllReminders(),
+            refreshTrigger
+        ) { activities, reminders, _ ->
+            val todaysReminders = reminders
+                .filter { isReminderForToday(it) }
+                .sortedByDescending { it.id }
 
             val notificationItems = todaysReminders.map { reminder ->
                 val activity = activities.find { it.id == reminder.activityId }
@@ -55,6 +60,10 @@ class HomeViewModel(
             }
             .flowOn(dispatcherProvider.io)
             .launchIn(viewModelScope)
+    }
+
+    fun refresh() {
+        refreshTrigger.value = System.currentTimeMillis()
     }
 
     private fun isReminderForToday(reminder: Reminder): Boolean {
