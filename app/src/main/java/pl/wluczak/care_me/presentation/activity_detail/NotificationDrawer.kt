@@ -85,10 +85,13 @@ fun NotificationDrawerContent(
                 shape = RoundedCornerShape(topStart = 24.dp, bottomStart = 24.dp)
             )
             .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 16.dp)
+            .consumeWindowInsets(PaddingValues(bottom = 106.dp))
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .imePadding(),
                 contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
