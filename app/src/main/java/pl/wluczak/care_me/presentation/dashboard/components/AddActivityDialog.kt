@@ -35,7 +35,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import pl.wluczak.care_me.R
-import pl.wluczak.care_me.ui.theme.TeaGreenContainer
+import pl.wluczak.care_me.ui.theme.AVAILABLE_COLORS
+import pl.wluczak.care_me.ui.theme.AVAILABLE_ICONS
+import pl.wluczak.care_me.ui.theme.toHex
 
 @Composable
 fun AddActivityDialog(
@@ -129,7 +131,7 @@ fun AddActivityDialog(
                                 .size(42.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    if (isSelected) TeaGreenContainer else Color.LightGray.copy(alpha = 0.2f)
+                                    if (isSelected) selectedColor else Color.LightGray.copy(alpha = 0.2f)
                                 )
                                 .border(
                                     width = if (isSelected) 2.dp else 0.dp,

@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import pl.wluczak.care_me.R
 import pl.wluczak.care_me.presentation.activity_detail.RichTextEditor
 import pl.wluczak.care_me.presentation.dashboard.NotificationItem
+import pl.wluczak.care_me.ui.theme.parseHexColor
 
 @Composable
 fun NotificationSlider(

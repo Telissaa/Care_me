@@ -24,6 +24,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.wluczak.care_me.domain.model.Activity
+import pl.wluczak.care_me.ui.theme.getIconByName
+import pl.wluczak.care_me.ui.theme.parseHexColor
 
 @Composable
 fun ActivityCircleCard(

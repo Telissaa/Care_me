@@ -57,7 +57,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import pl.wluczak.care_me.R
-import pl.wluczak.care_me.presentation.dashboard.components.parseHexColor
+import pl.wluczak.care_me.ui.theme.parseHexColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

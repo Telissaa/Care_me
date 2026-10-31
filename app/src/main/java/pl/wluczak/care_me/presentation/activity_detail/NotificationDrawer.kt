@@ -34,9 +34,9 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.compose.ui.platform.LocalContext
 import pl.wluczak.care_me.domain.model.Reminder
-import pl.wluczak.care_me.presentation.dashboard.components.AVAILABLE_COLORS
-import pl.wluczak.care_me.presentation.dashboard.components.parseHexColor
-import pl.wluczak.care_me.presentation.dashboard.components.toHex
+import pl.wluczak.care_me.ui.theme.AVAILABLE_COLORS
+import pl.wluczak.care_me.ui.theme.parseHexColor
+import pl.wluczak.care_me.ui.theme.toHex
 import pl.wluczak.care_me.ui.theme.White
 
 import java.util.Locale

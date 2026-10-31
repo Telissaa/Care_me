@@ -67,7 +67,7 @@ import com.mohamedrejeb.richeditor.ui.material3.RichText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pl.wluczak.care_me.R
-import pl.wluczak.care_me.presentation.dashboard.components.AVAILABLE_COLORS
+import pl.wluczak.care_me.ui.theme.AVAILABLE_COLORS
 import pl.wluczak.care_me.ui.theme.ThistleDark
 import pl.wluczak.care_me.ui.theme.White
 
