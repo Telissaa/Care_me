@@ -144,7 +144,10 @@ fun ActivityDetailScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = uiState.activity?.name ?: stringResource(id = R.string.activity_detail_title))
+                    Text(
+                        text = uiState.activity?.name ?: stringResource(id = R.string.activity_detail_title),
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
                 },
                 actions = {
                     IconButton(onClick = { isDrawerOpen = !isDrawerOpen }) {

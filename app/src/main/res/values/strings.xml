@@ -36,4 +36,5 @@
     <string name="editor_bullet_list">Bullet list</string>
     <string name="editor_numbered_list">Numbered list</string>
     <string name="editor_choose_color">Choose text color</string>
+    <string name="notifications_title">Notifications</string>
 </resources>

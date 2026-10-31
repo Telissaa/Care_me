@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,6 +34,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.compose.ui.platform.LocalContext
+import pl.wluczak.care_me.R
 import pl.wluczak.care_me.domain.model.Reminder
 import pl.wluczak.care_me.ui.theme.AVAILABLE_COLORS
 import pl.wluczak.care_me.ui.theme.parseHexColor
@@ -88,6 +90,13 @@ fun NotificationDrawerContent(
             .consumeWindowInsets(PaddingValues(bottom = 106.dp))
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = stringResource(id = R.string.notifications_title),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
