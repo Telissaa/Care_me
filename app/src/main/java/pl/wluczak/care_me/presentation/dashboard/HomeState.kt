@@ -8,7 +8,8 @@ data class NotificationItem(
     val timeRange: String,
     val notificationTitle: String? = null,
     val description: String = "",
-    val repeatDays: String = ""
+    val repeatDays: String = "",
+    val activityColorHex: String = "",
 )
 
 data class HomeState(

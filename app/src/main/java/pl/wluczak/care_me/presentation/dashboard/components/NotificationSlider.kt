@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,9 +35,6 @@ import androidx.compose.ui.unit.sp
 import pl.wluczak.care_me.R
 import pl.wluczak.care_me.presentation.activity_detail.RichTextEditor
 import pl.wluczak.care_me.presentation.dashboard.NotificationItem
-import pl.wluczak.care_me.ui.theme.FrostedBlueContainer
-import pl.wluczak.care_me.ui.theme.TeaGreenContainer
-import pl.wluczak.care_me.ui.theme.ThistleContainer
 
 @Composable
 fun NotificationSlider(
@@ -49,11 +46,11 @@ fun NotificationSlider(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.fillMaxWidth()
     ) {
-        itemsIndexed(notifications, key = { _, item -> item.id }) { index, item ->
-            val cardColor = when (index % 3) {
-                0 -> ThistleContainer
-                1 -> TeaGreenContainer
-                else -> FrostedBlueContainer
+        items(notifications, key = { item -> item.id }) { item ->
+            val cardColor = if (item.activityColorHex.isNotBlank()) {
+                parseHexColor(item.activityColorHex)
+            } else {
+                parseHexColor("#D4F5FF")
             }
 
             var expanded by remember { mutableStateOf(false) }

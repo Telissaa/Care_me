@@ -33,22 +33,56 @@ class HomeViewModel(
             activityRepository.getAllReminders(),
             refreshTrigger
         ) { activities, reminders, _ ->
-            val todaysReminders = reminders
-                .filter { isReminderForToday(it) }
-                .sortedByDescending { it.id }
+            val calendar = Calendar.getInstance()
+            val currentMinutes = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE)
+            
+            val todaysReminders = reminders.filter { isReminderForToday(it) }
+            
+            // Helper function to handle overnight logic and status determination
+            fun getReminderStatus(reminder: Reminder): String {
+                val startMins = reminder.startTimeHour * 60 + reminder.startTimeMinute
+                val endMins = reminder.endTimeHour * 60 + reminder.endTimeMinute
+                val isOvernight = startMins > endMins
+                
+                return if (isOvernight) {
+                    if (currentMinutes >= startMins || currentMinutes < endMins) "ongoing"
+                    else "upcoming"
+                } else {
+                    if (currentMinutes in startMins..<endMins) "ongoing"
+                    else if (currentMinutes < startMins) "upcoming"
+                    else "past"
+                }
+            }
 
-            val notificationItems = todaysReminders.map { reminder ->
+            val ongoing = todaysReminders.filter { getReminderStatus(it) == "ongoing" }
+                .sortedByDescending { it.startTimeHour * 60 + it.startTimeMinute }
+
+            val upcoming = todaysReminders.filter { getReminderStatus(it) == "upcoming" }
+                .sortedBy { it.startTimeHour * 60 + it.startTimeMinute }
+
+            val past = todaysReminders.filter { getReminderStatus(it) == "past" }
+                .sortedByDescending { it.endTimeHour * 60 + it.endTimeMinute }
+
+            // Merge and map
+            fun mapToNotificationItem(reminder: Reminder, isPast: Boolean): NotificationItem {
                 val activity = activities.find { it.id == reminder.activityId }
                 val title = activity?.name ?: "Notification"
-                NotificationItem(
+                return NotificationItem(
                     id = reminder.id,
                     activityName = title,
                     timeRange = reminder.formattedTimeRange,
                     notificationTitle = reminder.title.ifEmpty { null },
                     description = reminder.descriptionHtml,
-                    repeatDays = reminder.formattedDays
+                    repeatDays = reminder.formattedDays,
+                    activityColorHex = if (isPast) "#CCCCCC" else (activity?.colorHex ?: "#D4F5FF")
                 )
             }
+            
+            val ongoingItems = ongoing.map { mapToNotificationItem(it, false) }
+            val upcomingItems = upcoming.map { mapToNotificationItem(it, false) }
+            val pastItems = past.map { mapToNotificationItem(it, true) }
+
+            val notificationItems = ongoingItems + upcomingItems + pastItems
             HomeState(
                 activities = activities,
                 notifications = notificationItems,
