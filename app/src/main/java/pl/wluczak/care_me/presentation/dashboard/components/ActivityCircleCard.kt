@@ -39,13 +39,13 @@ fun ActivityCircleCard(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
     ) {
         Box(
             modifier = Modifier
                 .size(110.dp)
                 .clip(CircleShape)
-                .background(backgroundColor),
+                .background(backgroundColor)
+                .clickable(onClick = onClick),
             contentAlignment = Alignment.Center
         ) {
             Icon(
