@@ -65,3 +65,6 @@ fabric.properties
 
 # Mac OS
 .DS_Store
+
+# Local AI / Gemini instructions
+GEMINI.md
