@@ -75,6 +75,7 @@ fun ActivityDetailScreen(
     }
     
     var isDrawerOpen by remember { mutableStateOf(false) }
+    var isNavigatingBack by remember { mutableStateOf(false) } // Twarda flaga zapobiegająca wielokrotnej nawigacji
     
     BackHandler(enabled = isDrawerOpen) {
         isDrawerOpen = false
@@ -83,26 +84,13 @@ fun ActivityDetailScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .pointerInput(Unit) {
-                var dragOffset = 0f
-                detectHorizontalDragGestures(
-                    onDragStart = { dragOffset = 0f },
-                    onDragEnd = { dragOffset = 0f },
-                    onDragCancel = { dragOffset = 0f },
-                    onHorizontalDrag = { change, dragAmount ->
-                        dragOffset += dragAmount
-                        if (dragOffset < -50f && !isDrawerOpen) {
-                            isDrawerOpen = true
-                            change.consume()
-                            dragOffset = 0f // Reset after triggering
-                        } else if (dragOffset > 50f && isDrawerOpen) {
-                            isDrawerOpen = false
-                            change.consume()
-                            dragOffset = 0f // Reset after triggering
-                        }
-                    }
-                )
-            }
+            .activityDetailGestures(
+                getIsDrawerOpen = { isDrawerOpen },
+                onDrawerStateChange = { isDrawerOpen = it },
+                getIsNavigatingBack = { isNavigatingBack },
+                onNavigatingBackChange = { isNavigatingBack = it },
+                onBackClick = onBackClick
+            )
     ) {
         if (showDeleteDialog) {
         AlertDialog(
